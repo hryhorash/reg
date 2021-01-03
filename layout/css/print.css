@@ -1,0 +1,53 @@
+@media print {
+	/*---------ПРАЙС--------- */
+	
+	@page { margin: 1cm;}
+	.grid-33 { float: left; width: 33.33333%;}
+	* { -webkit-print-color-adjust: exact; }
+	.desktop-hide, .mobile-hide, .backOffice, #button, .uparrow-center, #footer , .cbalink, .discreet, .printHide {display:none !important;}
+	h2 {
+	font: bold 1em VDS, Verdana;
+    	color:black;  
+    	margin: 0.5em 0 0.7em;  
+    	letter-spacing:0.063em;
+		text-align:left;
+		padding: 10px;
+		margin: 0 10px;
+	}
+
+	body {
+		font-size:1em;
+		line-height:1.188em;   /* 19px */
+		padding-bottom: 0.938em;  /* 15px */
+		font-family: calibri;
+	}
+	body a {
+		color: black;
+		text-decoration: none;
+	}
+	
+	table {width: 233.5mm;}
+
+	 table, tbody, td, tr, th { 
+		vertical-align : middle; 
+		text-indent : 0; 
+		text-align : justify; 
+		border : black solid 1px; 
+		height: 2em;
+		border-collapse: collapse;
+	}
+	tr {page-break-inside: avoid;}
+	td, tr, th { padding: 0 10px 0 10px;}
+	th {
+		background-color : black; 
+		text-align : center; 
+		font-weight: normal;
+		color: white;
+	}
+
+	th.price4print{width: 15mm; border-left-color: white;}
+	th.price-header {border-right-color: white;}
+	.price-header {text-align:left; text-transform:uppercase; font-weight: bold;}
+	.price-contact {margin-right: -20px !important;}
+
+}			
