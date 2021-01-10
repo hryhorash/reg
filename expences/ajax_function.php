@@ -6,7 +6,7 @@ $("select[name='category']").change(function(){
 	$.ajax({
 		type: "GET",
 		url: "/expences/subcat_ajax.php",
-		data:	{ "category": $("#category option:selected").val(), "subcategory": "<?php if(isset($_SESSION['temp']['subcatID'])) echo $_SESSION['temp']['subcatID']; else echo $data['subcatID'];?>" },  
+		data:	{ "category": $("#category option:selected").val(), "subcategory":  $("#subcatID option:selected").val() },  
 		success: function(data){
 			document.getElementById("subcategory").innerHTML = data;
 		  }

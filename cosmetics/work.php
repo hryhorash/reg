@@ -114,12 +114,14 @@ echo '<section class="content">';
 					}
 					$count++;
 				} ?>
+				<tfoot>
 				<tr>
 					<th>			</th>
 					<th class='alignRight' colspan="2"><?=lang::HDR_TOTAL;?>:</th>
 					<th><?=correctNumber($total_pcs,1) . ' | ' . correctNumber($total_v,0);?></th>
 					<th><?=correctNumber($total_price,2) . curr();?></th>
 				</tr>
+			</tfoot>
 			</tbody>	
 		</table>
 		<p class="small italic">* <?=lang::EXPL_PRICE_PER_GR;?></p>

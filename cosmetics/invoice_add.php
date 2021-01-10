@@ -64,24 +64,23 @@ echo '<section class="content">';
 
 	<form method="post" style="max-width: 810px;">
 		<fieldset >
-			<?php 
-			location_options($select = 1, null, null, 1);
-			supplier_select();
-			invoice_state_select($supplierData['state']);?>
+			<div class="row col-2">
+				<?php 
+				location_options($select = 1, null, null, 1);
+				supplier_select();
+				invoice_state_select($supplierData['state']);?>
+			</div>
 			<div id="invoiceDetails" style="display:none;">
-				<div class="row">
+				<div class="row col-2">
 					<label for="invoice"><?=lang::HDR_INVOICE;?>*:</label>
 					<input name="invoice" type="text" value="<?=$_SESSION['temp']['invoice'];?>" />
-				</div>
-				<div class="row">
+				
 					<label for="date"><?=lang::HDR_INVOICE_DATE;?>*:</label>
 					<input name="date" type="date" value="<?=$_SESSION['temp']['date'];?>" />
-				</div>
-				<div class="row">
+				
 					<label for="datePaid"><?=lang::HDR_DATE_PAID;?>:</label>
 					<input name="datePaid" type="date" value="<?=$_SESSION['temp']['datePaid'];?>" />
-				</div>
-				<div class="row">
+				
 					<label for="dateReceived"><?=lang::HDR_DATE_RECEIVED;?>:</label>
 					<input name="dateReceived" type="date" value="<?=$_SESSION['temp']['dateReceived'];?>" />
 				</div>

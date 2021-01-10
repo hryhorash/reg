@@ -6,7 +6,7 @@ include('tabs.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	$_SESSION['temp'] = array(
-		'catID' 		=> $_POST['catID'],
+		'catID' 		=> $_POST['category'],
 		'subcatID' 		=> $_POST['subcatID'],
 		'date' 			=> $_POST['date'],
 		'unitPrice'		=> $_POST['unitPrice'],
@@ -31,11 +31,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$sql = "INSERT INTO stakes (subcatID, date, unitPrice, monthlyPrice, locationID, author)
 				VALUES(:subcatID, :date, :unitPrice, :monthlyPrice, :locationID, :author)";
 				
-		$sql_archive = "UPDATE stakes
+		$sql_archive = "UPDATE `stakes`
 				SET archive = 1,
 					`timestamp` = :timestamp,
 					author = :author
-				WHERE subcatID=:subcatID and archive=0 and locationID=:locationID  and stakes.date = (SELECT MIN(stakes.date) from stakes where subcatID=:subcatID and locationID=:locationID and archive=0)";
+				WHERE subcatID=:subcatID 
+					and archive=0 
+					and locationID=:locationID  
+					and stakes.date = (SELECT MIN(stakes.date) from `stakes` where subcatID=:subcatID and locationID=:locationID and archive=0)";
 		try {
 			$insert = $pdo->prepare($sql);
 			$insert->bindValue(':subcatID', $_POST["subcatID"], PDO::PARAM_INT); 
@@ -90,28 +93,25 @@ echo '<section class="content">';
 
 	<form action="<?php $_SERVER['PHP_SELF'].'?tab='.$_GET['tab'];?>" method="post">
 		<fieldset>
-			<div class="row">
-				<label for="catID"><?=lang::HDR_CATEGORY;?>*:</label>
-				<select name="catID" id="category">
+			<div class="row col-2">
+				<label for="category"><?=lang::HDR_CATEGORY;?>*:</label>
+				<select name="category" id="category">
 					<?=cat_list(0); ?>
 				</select>
-			</div>
-			<div class="row">
-				<label for="subcatID"><?=lang::HDR_SUBCATEGORY;?>*:</label>
-				<select name="subcatID" id="subcategory" required>
-					
-				</select>
-			</div>
 			
-			<?=location_options('','',$_SESSION['temp']['loc']); ?>
-			<div class="row">
+				<label for="subcatID"><?=lang::HDR_SUBCATEGORY;?>*:</label>
+				<select name="subcatID" id="subcategory" required></select>
+			
+				<?=location_options('','',$_SESSION['temp']['loc']); ?>
+			
 				<label for="date"><?=lang::HDR_ACTIVE_FROM;?>*:</label>
 				<input name="date" type="date" value="<?=defaultDate();?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="price"><?=lang::HDR_COST;?>*:</label>
-				<input name="unitPrice" type="number" step="0.01" placeholder="<?=lang::PER_PIECE_PLACEHOLDER;?>" class="half-flex" style="margin-right: 10px;" value="<?=$_SESSION['temp']['unitPrice'];?>" />
-				<input name="monthlyPrice" type="number" step="0.01" placeholder="<?=lang::PER_MONTH_PLACEHOLDER;?>" class="half-flex" value="<?=$_SESSION['temp']['monthlyPrice'];?>" />
+				<div class="row" style="grid-template-columns: 1fr 1fr;">
+					<input name="unitPrice" type="number" step="0.01" placeholder="<?=lang::PER_PIECE_PLACEHOLDER;?>" value="<?=$_SESSION['temp']['unitPrice'];?>" />
+					<input name="monthlyPrice" type="number" step="0.01" placeholder="<?=lang::PER_MONTH_PLACEHOLDER;?>" value="<?=$_SESSION['temp']['monthlyPrice'];?>" />
+				</div>
 			</div>
 		</fieldset>
 		<input id="button" type="submit" value="<?=lang::BTN_ADD;?>" />

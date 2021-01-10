@@ -29,36 +29,51 @@ if(isset($_POST["changePass"])) {
 					else $_SESSION['error'] = lang::ERR_GENERAL;
 				} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}
 				
-				header( 'location: profile.php');
-				exit();
 			} else $_SESSION['error'] = lang::ERR_PASS;
 			
 			
 			$pdo=NULL;
 		}
 	} else $_SESSION['error'] = lang::ERR_PASS_DONT_MATCH;			
-}		
+	header( 'location: profile.php');
+	exit();
+}		?>
 
-$title = $_SESSION['name'];
-//-----------------------------------------------------------
-include($_SERVER['DOCUMENT_ROOT'].'/layout/head.php'); 
-echo '<section class="content flex">';
-	include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');	?>
-	<h2><?=$_SESSION['name'];?></h2>
-	<form method="post" style="max-width: 510px;">  
-		<fieldset class="autoMargin">
-		<div class='row' style="width:100%;">
-			<input type="password" name="oldPass" required placeholder="<?php echo lang::OLD_PASS; ?>" />
+<form id="ch_pass_form"	name="ch_pass_form"	method="post" action="/user/newpass.php"
+	style="
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		max-width: unset;">
+	<fieldset style="
+			position: absolute;
+			top: 150px;
+			left: 50%;
+			transform: translateX(-50%);
+			background: var(--clr-bg);
+			padding: var(--padding-std);">
+		<div class="row">
+			<input type="password" name="oldPass" required placeholder="<?php echo lang::OLD_PASS; ?>" autofocus />
 		</div>
-		<div class='row nested' style="width:100%;">	
-			<input type="password" name="pass" required placeholder="<?php echo lang::NEW_PASS; ?>"  />
-			<input type="password" name="pass2" required placeholder="<?php echo lang::CONFIRM_PASS; ?>" />
-			
-		</div>	
-		<input type="submit" name="changePass" id="button" value="<?php echo lang::BTN_CHANGE; ?>" />  
-		</fieldset>
-	</form>  
-</section>  
+		<div class="row col-2e">
+			<input type="password" name="pass"  required	placeholder="<?php echo lang::NEW_PASS; ?>" />
+			<input type="password" name="pass2" required	placeholder="<?php echo lang::CONFIRM_PASS; ?>"	/>
 
+			<button type="submit" form="ch_pass_form" name="changePass" value="Submit">
+				<?=lang::BTN_CHANGE;?>
+			</button>
+			<button type="button" id="cancel">
+				<?=lang::BTN_CANCEL;?>
+			</button>
+		</div>
+	</fieldset>
+</form>
 
-<?php include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php'); ?>
+<script>
+	$("#cancel").click(function () {
+		$("#ch_pass_form").remove();
+	});
+</script>

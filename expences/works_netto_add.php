@@ -48,11 +48,10 @@ echo '<section class="content">';
 
 	<form action="<?=$_SERVER['PHP_SELF'];?>" method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="name" type="text" value="<?=$_SESSION['temp']['name'];?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="cost"><?=lang::HDR_COST;?>*:</label>
 				<input name="cost" type="number" step="any" min="0" value="<?=$_SESSION['temp']['cost'];?>" required />
 			</div>

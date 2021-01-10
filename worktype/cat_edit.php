@@ -105,11 +105,12 @@ echo '<section class="content">';
 	echo '<h2>'. $data['category'] .'</h2>'; ?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="category"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="category" class="worktype_cat" type="text" value="<?=$data['category']; ?>" required />
+				
+				<?=work_netto_services_options($data['serv_nettoIDs']);?>
 			</div>	
-			<?=work_netto_services_options($data['serv_nettoIDs']);?>
 			
 			<input name="id" type="hidden" value="<?=$_GET['id']; ?>" />
 			<input name="serv_work_old" type="hidden" value="<?=$data['serv_nettoIDs']; ?>" />

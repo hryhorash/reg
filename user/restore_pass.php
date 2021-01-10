@@ -101,22 +101,19 @@ $pdo=NULL;
 $title = lang::H2_RESTORE_PASS;		
 //-----------------------------------------------------------
 include($_SERVER['DOCUMENT_ROOT'].'/layout/head.php'); 
-echo '<section class="content flex">';
+echo '<section class="content">';
 	include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');
 	?>
 
 
 	<form method="post" name="auth">  
-		<fieldset name='auth' class="autoMargin">
-		<h2><?=lang::H2_RESTORE_PASS;?></h2>  
+		<fieldset name='auth' class="autoMargin padding">
+			<h2><?=lang::H2_RESTORE_PASS;?></h2>  
 
-		<div class="inline">	
-			<input type="email" name="email" required placeholder="<?=lang::HDR_RESTORE_EMAIL;?>" class="marginRight" style="flex:1;"/>
-			
-			<input type="submit" name="restore" style="flex:0.5;" value="<?=lang::HANDLING_RESTORE;?>" />  
-		</div>	
-			
-		
+			<div class="row" style="grid-template-columns: 1fr 1fr;">	
+				<input type="email" name="email" required placeholder="<?=lang::HDR_RESTORE_EMAIL;?>" />
+				<input type="submit" name="restore" value="<?=lang::HANDLING_RESTORE;?>" />  
+			</div>	
 		</fieldset>
 	</form>  
 </section>  

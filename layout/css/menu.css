@@ -37,8 +37,8 @@ nav {
 .nav-links {
 	position: absolute;
 	right:0px;
-	height: 93vh;
-	top: 33px;
+	min-height: calc(100vh - 50px);
+	top: 50px;
 	border-left: 2px #cacaca solid;
 	background-color: #e3e3e3;
 	display: flex;
@@ -51,6 +51,9 @@ nav {
 	justify-content: end;
 }
 
+
+
+
 .nav-links li {
 	list-style: none;
 	line-height: 3em;
@@ -62,16 +65,16 @@ nav {
 .nav-links li {
 	color: #4f4f4f;
 	text-decoration: none;
+	height: auto;
 }
 
-.nav-links a {
-	display: block;
-	width: 100%;
+.nav-links i,
+.profile a {
+	align-self: center;
 }
 
 .nav-active {
 	transform: translateX(0%);
-	overflow-y: scroll;
 	overflow-x: hidden;
 }
 
@@ -200,10 +203,6 @@ element.style {
 		right: unset;
 	}
 	
-	.nav-links a, .nav-links li {
-		line-height: 4em;
-	}
+	
 	
 }
-
-

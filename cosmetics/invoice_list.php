@@ -46,7 +46,12 @@ if ($locationID != NULL) {
 		$stmt -> bindValue(':locationID', $locationID, PDO::PARAM_INT);
 		$stmt ->execute();
 		$count=1;
-		while ($data[$count] = $stmt->fetch(PDO::FETCH_ASSOC))  $count++;
+		$total_pcs = $total_sum = 0;
+		while ($data[$count] = $stmt->fetch(PDO::FETCH_ASSOC))  {
+			$total_pcs += $data[$count]['items'];
+			$total_sum += $data[$count]['sum'];
+			$count++;
+		}
 		
 	} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}$stmt = $pdo->prepare($sql);
 	$pdo=NULL;
@@ -94,13 +99,13 @@ echo '<section class="content">';
 
 
 	if ($count > 1) {?>
-		<table class='stripy table-autosort table-autofilter'>
+		<table class='stripy table-autosort'>
 			<thead>
 				<tr>
-					<th style='max-width: 10%;'>№</th>
+					<th style='width: max-content;'>№</th>
 					<th><?=lang::DATE;?></th>
 					<th class='table-sortable:*'><?php echo lang::HDR_SUPPLIER;?></th>
-					<th class="mobile-hide table-sortable:*"><?php echo lang::HDR_INVOICE;?></th>
+					<th class="mobile-hide"><?php echo lang::HDR_INVOICE;?></th>
 					<th class='table-sortable:*'><?php echo lang::HDR_INVOICE_STATE;?></th>
 					<th class="mobile-hide"><?php echo lang::HDR_QTY;?></th>
 					<th><?php echo lang::HDR_COST;?></th>
@@ -111,7 +116,7 @@ echo '<section class="content">';
 			<?php $count=1;
 				while($data[$count] !=NULL) {
 					echo '<tr>
-						<td class="small center" style="max-width:10%;">' . ($count+$offset)	. '</td>
+						<td class="small center">' . ($count+$offset)	. '</td>
 						<td>' . correctDate($data[$count]['date'])	. '</td>
 						<td>'.$data[$count]['supplier'].'<br /><span class="small">'; brand_names_only($data[$count]['supplierID'],1);	echo '</span></td>
 						<td class="mobile-hide">' . $data[$count]['invoice'] . '</td>
@@ -124,7 +129,18 @@ echo '<section class="content">';
 						</tr>
 					<?php $count++;
 				} ?>
-			</tbody>	
+			</tbody>
+			<tfoot>	
+				<tr>
+					<th></th>
+					<th colspan="2"><?=lang::HDR_TOTAL;?>:</th>
+					<th class="mobile-hide"></th>
+					<th></th>
+					<th><?=$total_pcs;?></th>
+					<th><?=correctNumber($total_sum) . curr();?></th>
+					<th></th>
+				</tr>
+			</tfoot>
 		</table>
 		<?php list_navigation_buttons($count,$offset,$limit);
 		

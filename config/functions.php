@@ -1,7 +1,7 @@
 <?php
-function select_lang($selectOnly = 0) { //возвращает форму выбора языка
+function select_lang() { //возвращает форму выбора языка
 //Если установлен $selectOnly - выдает только поле формы
-	if (!isset($_SESSION['lang_options'])) {
+	//if (!isset($_SESSION['lang_options'])) {
 		$lang_options_raw = scandir($_SERVER['DOCUMENT_ROOT'] . '/lang/');
 		$lang_options = array();
 		foreach ($lang_options_raw as $lang) {
@@ -10,58 +10,28 @@ function select_lang($selectOnly = 0) { //возвращает форму выб
 			}
 			
 		}
-	$_SESSION['lang_options'] = $lang_options;
-	}
+		$_SESSION['lang_options'] = $lang_options;
+	//}
 	
-	if ($selectOnly == 0) {
-		echo '<form method="post">
-			<fieldset class="noBorders">
-				<div class="inline">
-					<select name="lang" id="lang">';
-						foreach ($_SESSION['lang_options'] as $option) {
-							switch ($option) {
-								case 'ru':
-									echo '<option value="ru">Русский</option>';
-									break;
-								case 'ua':
-									echo '<option value="ua">Українська</option>';
-									break;
-								case 'en':
-									echo '<option value="en">English</option>';
-									break;
-								default:
-									echo '<option value="'.$option.'">'.$option.'</option>';
-									break;
-							}
-						}
-					echo '</select>
-					<input type="submit" value="'.lang::BTN_CHANGE.'" />
-				</div>
-			</fieldset>
-		</form>';
-	} else {
-		echo '<div class="row">
-			<label for="lang">'.lang::LANGUAGE.':</label>
-			<select name="lang" id="lang" >';
-				foreach ($_SESSION['lang_options'] as $option) {
-					switch ($option) {
-						case 'ru':
-							echo '<option value="ru">Русский</option>';
-							break;
-						case 'ua':
-							echo '<option value="ua">Українська</option>';
-							break;
-						case 'en':
-							echo '<option value="en">English</option>';
-							break;
-						default:
-							echo '<option value="'.$option.'">'.$option.'</option>';
-							break;
-					}
-				}
-			echo '</select>
-		</div>';
-	}
+	$lang_names = array(
+		'ru' => 'Русский',
+		'ua' => 'Українська',
+		'en' => 'English'
+	);
+	
+	echo '<label for="lang">'.lang::LANGUAGE.':</label>
+	<select name="lang" id="lang" >';
+		foreach ($_SESSION['lang_options'] as $option) {
+			echo '<option value="'.$option . '"';
+				if($option == $_SESSION['lang']) echo ' selected';
+				echo '>';
+					if (isset($lang_names[$option])) echo $lang_names[$option];
+					else echo $option;
+			echo '</option>';
+			
+		}
+	echo '</select>';
+	
 					
 }
 
@@ -212,7 +182,6 @@ function location_options($select = 0, $tab = null, $checked = null, $noButtonRo
 				echo'</fieldset>
 			</form>';
 		} else { // для встраивания в форму
-			if($filter != 1) echo '<div class="row nested">';
 				if($filter != 1) echo '<label for="loc">'. lang::HDR_LOCATION.'*:</label>';
 				echo '<select name="loc" required>';
 					if($_SESSION['locationName'] == null){
@@ -234,7 +203,6 @@ function location_options($select = 0, $tab = null, $checked = null, $noButtonRo
 								echo'>' . $val . '</option>';
 							}
 				echo '</select>';
-			if($filter != 1) echo '</div>';
 		}
 			
 	} else { // ЧЕК-БОКСЫ
@@ -250,27 +218,25 @@ function location_options($select = 0, $tab = null, $checked = null, $noButtonRo
 			}
 		}
 	
-		echo '<div class="row">';
-				echo '<label>'. lang::HDR_LOCATION_PLURAL.'*:</label>';
-				echo '<div class="flex">';
-					foreach ($res as $key => $val){
-						echo '<div class="inline">
-							<input name="loc['. $key . ']" type="checkbox" value="' . $key .'"';
-							switch(true)
-							{
-								case ($checked != null && in_array($key, $haystack)):
-								case (isset($_SESSION['locationName']) && $_SESSION['locationIDs'] == $key):
-								case ($_SESSION['locationSelected'] == $key):
-									echo 'checked';
-									break;
-							}
-							
-							echo '>
-							<label for="loc['.$key .']">' . $val . ' </label>';
-						echo '</div>';
-					}
-				echo '</div>';
-			echo '</div>';
+		echo '<label>'. lang::HDR_LOCATION_PLURAL.'*:</label>';
+		echo '<div>';
+			foreach ($res as $key => $val){
+				echo '<div class="flex">
+					<input name="loc['. $key . ']" type="checkbox" value="' . $key .'"';
+						switch(true)
+						{
+							case ($checked != null && in_array($key, $haystack)):
+							case (isset($_SESSION['locationName']) && $_SESSION['locationIDs'] == $key):
+							case ($_SESSION['locationSelected'] == $key):
+								echo 'checked';
+								break;
+						}
+						
+						echo '>
+					<label for="loc['.$key .']">' . $val . ' </label>
+				</div>';
+			}
+		echo '</div>';
 	}	
 }
 
@@ -352,19 +318,17 @@ function user_select($locationID, $selected=null, $filter=null) {
 	
 	
 	if ($filter !=1) {
-		echo '<div class="row">
-		<label for="userID">' . lang::HDR_EMPLOYEE . ':</label>';
+		echo '<label for="userID">' . lang::HDR_EMPLOYEE . ':</label>';
 	}
-		echo'<select name="userID" required>';
-			if ($filter !=1) echo '<option value="">' . lang::SELECT_DEFAULT. '</option>';
-			else echo '<option value="all">' . lang::HDR_EMPLOYEE . lang::SELECT_ADD_ALL. '</option>';
-			while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-				echo '<option value="'.$row['id'].'" ';
-					if($row['id'] == $selected && $selected != '') echo 'selected';
-				echo '>' . $row['user'] . '</option>';
-			}
-		echo '</select>';
-if ($filter !=1) echo '</div>';
+	echo'<select name="userID" required>';
+		if ($filter !=1) echo '<option value="">' . lang::SELECT_DEFAULT. '</option>';
+		else echo '<option value="all">' . lang::HDR_EMPLOYEE . lang::SELECT_ADD_ALL. '</option>';
+		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			echo '<option value="'.$row['id'].'" ';
+				if($row['id'] == $selected && $selected != '') echo 'selected';
+			echo '>' . $row['user'] . '</option>';
+		}
+	echo '</select>';
 }
 
 function staff_select_options($locationID, $selected=null) {
@@ -410,17 +374,15 @@ function get_staff_cat_wages() {
 function even_select($selected=null) {
 	$days = array(lang::HDR_ODD,lang::HDR_EVEN);
 	
-echo '<div class="row">
-		<label for="even">' . lang::HDR_ODD_OR_EVEN . ':</label>
-		<select name="even">';
-			echo '<option value="">' . lang::SELECT_DEFAULT . '</option>';
-			foreach($days as $k => $v) {
-				echo '<option value="'.$k.'" ';
-					if($k == $selected && $selected != '') echo 'selected';
-				echo '>' . $v . '</option>';
-			}
-		echo '</select>';
-echo '</div>';
+	echo '<label for="even">' . lang::HDR_ODD_OR_EVEN . ':</label>
+	<select name="even">';
+		echo '<option value="">' . lang::SELECT_DEFAULT . '</option>';
+		foreach($days as $k => $v) {
+			echo '<option value="'.$k.'" ';
+				if($k == $selected && $selected != '') echo 'selected';
+			echo '>' . $v . '</option>';
+		}
+	echo '</select>';
 }
 
 
@@ -584,9 +546,9 @@ function work_cat_select($check = null, $selected = null, $filter=null, $userID 
 		if($selected != null) $haystack = explode(',',$selected);
 		if(isset($_SESSION['temp']['specialty'])) $haystack=$_SESSION['temp']['specialty'];
 		
-		echo '<div class="flex-row">';
+		echo '<div class="row col-2e">';
 		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			echo '<div class="inline half">
+			echo '<div class="flex">
 				<input name="specialty[]" type="checkbox" value="' . $row['id'].'"';
 				
 				if(isset($haystack) && in_array($row['id'], $haystack)) echo 'checked';
@@ -605,7 +567,7 @@ function work_cat_select($check = null, $selected = null, $filter=null, $userID 
 					$i=0;
 					while($users[$i] != null) {
 						if($users[$i] == $userID) {
-							echo '<input name="reward_rate[]" class="short"  type="number" min="0" max="100" step="1" placeholder="' . lang::HDR_RATE_PLACEHOLDER . '" value="' . $rates[$i].'" style="margin-right:10px;" />';
+							echo '<input name="reward_rate[]" class="short" style="position:absolute; right:0;" type="number" min="0" max="100" step="1" placeholder="' . lang::HDR_RATE_PLACEHOLDER . '" value="' . $rates[$i].'" />';
 							echo '<input name="reward_rate_old[]" type="hidden" value="' . $rates[$i].'" />';
 						}
 						$i++;
@@ -667,7 +629,7 @@ function phones_add($array=null){
 		
 		$i=0;
 		foreach($array as $phone) {
-			echo '<div class="row">
+			echo '<div class="row col-2">
 				<label for="phones[]">'. lang::HDR_PHONE .':</label>
 				<input name="phones[]" type="tel" placeholder="'. lang::PHONE_PLACEHOLDER_PATTERN .'" minlength="7" maxlength="12" value="' . $phone .'" />';
 				if($i == 0) echo '<i class="fas fa-plus inline-fa" onclick="phoneAdd();"></i>';
@@ -675,7 +637,7 @@ function phones_add($array=null){
 			echo '</div>';
 		} 
 	} else {
-		echo '<div class="row">
+		echo '<div class="row col-2">
 			<label for="phones[]">'. lang::HDR_PHONE .':</label>
 			<input name="phones[]" type="tel" placeholder="'. lang::PHONE_PLACEHOLDER_PATTERN .'" minlength="7" maxlength="12" />
 			<i class="fas fa-plus inline-fa" onclick="phoneAdd();"></i>
@@ -683,7 +645,7 @@ function phones_add($array=null){
 	}
 	
 	echo '<template id="phone">
-		<div class="row">
+		<div class="row col-2">
 			<label for="phones[]">'. lang::HDR_PHONE .':</label>
 			<input name="phones[]" type="tel" placeholder="'.lang::PHONE_PLACEHOLDER_PATTERN.'" minlength="7" maxlength="12" />
 					
@@ -780,18 +742,16 @@ function brand_select($selected=null) {
 				FROM brands
 				ORDER by brands.name");
 		$stmt->execute();
-		echo '<div class="row">
-			<label>'.lang::HDR_BRAND.':*</label>
-			<select name="brandID" required>
-				<option value="">' . lang::SELECT_DEFAULT . '</option>';
-				while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-					echo '<option value="'.$row['id'].'"';
-						if($_GET['brandID'] == $row['id'] || $_SESSION['temp']['brandID'] == $row['id'] || $selected == $row['id']) echo 'selected';
-					echo '>' . $row['name'] . '</option>';
-				}
-			echo '</select>
-			<a class="form-inline" title="'.lang::MENU_NEW.'" href="/cosmetics/brand_add.php?backTo=cosmetics_add"><i class="fas fa-plus inline-fa"></i></a>
-		</div>';
+		echo '<label>'.lang::HDR_BRAND.':*</label>
+		<select name="brandID" required>
+			<option value="">' . lang::SELECT_DEFAULT . '</option>';
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				echo '<option value="'.$row['id'].'"';
+					if($_GET['brandID'] == $row['id'] || $_SESSION['temp']['brandID'] == $row['id'] || $selected == $row['id']) echo 'selected';
+				echo '>' . $row['name'] . '</option>';
+			}
+		echo '</select>
+		<a class="form-inline" title="'.lang::MENU_NEW.'" href="/cosmetics/brand_add.php?backTo=cosmetics_add"><i class="fas fa-plus"></i></a>';
 }
 
 function brand_multiselect($checked=null) {
@@ -818,12 +778,11 @@ function brand_multiselect($checked=null) {
 				}
 		}
 	
-		echo '<div class="row">';
-				echo '<label>'. lang::HDR_BRANDS.'*:</label>';
-				echo '<div class="flex-row">';
-					foreach ($res as $key => $val){
-						echo '<div class="inline half">
-							<input name="brandIDs['. $key . ']" type="checkbox" value="' . $key .'"';
+			echo '<label>'. lang::HDR_BRANDS.'*:</label>';
+			echo '<div class="row col-2e">';
+				foreach ($res as $key => $val){
+					echo '<div>
+						<input name="brandIDs['. $key . ']" type="checkbox" value="' . $key .'"';
 							if ($checked != null && in_array($key, $haystack)) {
 								echo 'checked';
 							}
@@ -831,11 +790,10 @@ function brand_multiselect($checked=null) {
 								echo 'checked';
 							}
 							
-							echo '>
-							<label for="brandIDs['.$key .']">' . $val . ' </label>';
-						echo '</div>';
-					}
-				echo '</div>';
+						echo '>
+						<label for="brandIDs['.$key .']">' . $val . ' </label>
+					</div>';
+				}
 			echo '</div>';
 }
 
@@ -892,8 +850,7 @@ function cosm_purpose($value) {
 
 function cosm_purpose_select($selected=null, $filter=null){
 	$purposes=array(lang::HDR_PURPOSE_WORK,lang::HDR_PURPOSE_SALE,lang::HDR_PURPOSE_BOTH,lang::HDR_PURPOSE_ACCOUNT);
-	if($filter == null) echo '<div class="row">
-			<label>'.lang::HDR_PURPOSE.':*</label>';
+	if($filter == null) echo '<label>'.lang::HDR_PURPOSE.':*</label>';
 			echo '<select name="purpose"'; if($filter == null) echo ' required'; echo '>';
 				if($filter != null) {
 					echo '<option value="all"';
@@ -907,23 +864,20 @@ function cosm_purpose_select($selected=null, $filter=null){
 					echo '>'.$val.'</option>';
 				}
 			echo '</select>';
-		if($filter == null) echo '</div>';
 }
 
 function VAT_select($selected=null){
 	$VAT=array(lang::VAT_NO,lang::VAT_YES);
-	echo '<div class="row">
-			<label>'.lang::HDR_VAT.':*</label>
-			<select name="VAT" required>
-				<option value="">' . lang::SELECT_DEFAULT . '</option>';
-				foreach ($VAT as $key => $val) {
-					echo '<option value="'.$key.'"';
-						if ($_SESSION['temp']['VAT'] !=null && $_SESSION['temp']['VAT'] == $key) echo 'selected';
-						if (isset($selected) && $selected == $key) echo 'selected';
-					echo '>'.$val.'</option>';
-				}
-			echo '</select>
-		</div>';
+	echo '<label>'.lang::HDR_VAT.':*</label>
+	<select name="VAT" required>
+		<option value="">' . lang::SELECT_DEFAULT . '</option>';
+		foreach ($VAT as $key => $val) {
+			echo '<option value="'.$key.'"';
+				if ($_SESSION['temp']['VAT'] !=null && $_SESSION['temp']['VAT'] == $key) echo 'selected';
+				if (isset($selected) && $selected == $key) echo 'selected';
+			echo '>'.$val.'</option>';
+		}
+	echo '</select>';
 }
 
 function VAT_read($value) {
@@ -965,18 +919,16 @@ function supplier_select($selected=null){
 	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 		$res[$row['id']]=$row['name'];
 	}
-	echo '<div class="row">
-			<label>'.lang::HDR_SUPPLIER.':*</label>
-			<select name="supplier" required>
-				<option value="">' . lang::SELECT_DEFAULT . '</option>';
-				foreach ($res as $key => $val) {
-					echo '<option value="'.$key.'"';
-						if ($_SESSION['temp']['supplier'] !=null && $_SESSION['temp']['supplier'] == $key) echo 'selected';
-						if (isset($selected) && $selected == $key) echo 'selected';
-					echo '>'.$val.'</option>';
-				}
-			echo '</select>
-		</div>';
+	echo '<label>'.lang::HDR_SUPPLIER.':*</label>
+	<select name="supplier" required>
+		<option value="">' . lang::SELECT_DEFAULT . '</option>';
+		foreach ($res as $key => $val) {
+			echo '<option value="'.$key.'"';
+				if ($_SESSION['temp']['supplier'] !=null && $_SESSION['temp']['supplier'] == $key) echo 'selected';
+				if (isset($selected) && $selected == $key) echo 'selected';
+			echo '>'.$val.'</option>';
+		}
+	echo '</select>';
 }
 
 function invoice_state_select($selected=null){
@@ -989,17 +941,15 @@ function invoice_state_select($selected=null){
 		lang::PURCHASE_STATE5
 	);
 	
-	echo '<div class="row">
-			<label>'.lang::HDR_PURCHASE_STATE.':*</label>
-			<select name="state" required>
-				<option value="">' . lang::SELECT_DEFAULT . '</option>';
-				foreach ($states as $key => $val) {
-					echo '<option value="'.$key.'"';
-						if (isset($selected) && $selected == $key) echo 'selected';
-					echo '>'.$val.'</option>';
-				}
-			echo '</select>
-		</div>';
+	echo '<label>'.lang::HDR_PURCHASE_STATE.':*</label>
+	<select name="state" required>
+		<option value="">' . lang::SELECT_DEFAULT . '</option>';
+		foreach ($states as $key => $val) {
+			echo '<option value="'.$key.'"';
+				if (isset($selected) && $selected == $key) echo 'selected';
+			echo '>'.$val.'</option>';
+		}
+	echo '</select>';
 	
 }
 
@@ -1055,41 +1005,143 @@ function cat_list ($inmenu = 1, $selected=null, $filter=null) { // катего�
 function stakesExpenses($subcatID, $month) {
 	require($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
 	
-	$stmt = $pdo->prepare("SELECT date 
-							FROM visits
-							WHERE locationID = :locationID
-								AND DATE_FORMAT(visits.date, '%Y-%m') = :month
-								AND price_total > 0 
-								AND state = 10
-							GROUP BY date
-							");
-	$stmt->bindValue(':month', $month, PDO::PARAM_STR);
-	$stmt->bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
-	$stmt->execute();
-	
+	$date = $month . '-' .date('t',strtotime($month . '-01'));  //последний день данного меcяца
 	$total_subcategory = 0;
-	
-	while($row_date=$stmt->fetch(PDO::FETCH_ASSOC)){
-		$stmt2 = $pdo->prepare("SELECT date, unitPrice, monthlyPrice
-								FROM stakes
-								WHERE subcatID = :subcatID
-									AND locationID = :locationID
-									AND date BETWEEN '1970-01-01' AND :date
-								ORDER BY date DESC
-								LIMIT 1");
-		$stmt2->bindParam(':subcatID', $subcatID, PDO::PARAM_INT);
-		$stmt2->bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
-		$stmt2->bindParam(':date', $row_date['date'], PDO::PARAM_STR);
-		$stmt2->execute();
-		$row = $stmt2->fetch();
-		if (isset($row['date']) && $row['unitPrice'] > 0)
-			$total_subcategory = $total_subcategory + $row['unitPrice'];
-		else {
-			$total_subcategory = $row['monthlyPrice'];
-		}
+	$stmt = $pdo->prepare("SELECT date, unitPrice, monthlyPrice
+						FROM stakes
+						WHERE subcatID = :subcatID
+							AND locationID = :locationID
+							AND date BETWEEN '1970-01-01' AND :date
+						ORDER BY date DESC
+						LIMIT 1");
+	$stmt->bindValue(':subcatID', $subcatID, PDO::PARAM_INT);
+	$stmt->bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
+	$stmt->bindParam(':date', $date, PDO::PARAM_STR);
+	$stmt->execute();
+	$stakes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+	$unitPrice = $monthlyPrice = 0;
+	foreach($stakes as $row) {
+		$unitPrice += $row['unitPrice'];
+		$monthlyPrice += $row['monthlyPrice'];
 	}
+
+	switch(true){
+		case($unitPrice > 0 && $monthlyPrice > 0):
+			$noBrake = 1;
+
+		case($monthlyPrice > 0):
+			$total_subcategory = $monthlyPrice;
+			if(!isset($noBreak)) break;
+		
+		case($unitPrice > 0):
+			$stmt2 = $pdo->prepare("SELECT date 
+									FROM visits
+									WHERE locationID = :locationID
+										AND DATE_FORMAT(visits.date, '%Y-%m') = :month
+										AND price_total > 0 
+										AND state = 10
+									GROUP BY date
+									");
+			$stmt2->bindValue(':month', $month, PDO::PARAM_STR);
+			$stmt2->bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
+			$stmt2->execute();
+			$dates = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+			foreach($dates as $row_date) {
+				foreach($stakes as $row) {
+					if($row['date'] <= $row_date['date']) {
+						$total_subcategory += $row['unitPrice'];
+						break;
+					}
+				}
+			}
+			break;
+		
+		default:
+			break;
+	}
+
 	return $total_subcategory;
 }
+
+
+//// Годовые расходы с заданными ставками (для фин.отчета)
+function stakesExpenses_year($subcatID, $year) {
+	require($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
+	$date_fin = $year . '-12-31';
+	$total_subcategory = 0;
+	$stmt = $pdo->prepare("SELECT date, unitPrice, monthlyPrice
+							FROM stakes
+							WHERE subcatID = :subcatID
+								AND locationID = :locationID
+								AND date BETWEEN '1970-01-01' AND :date
+							ORDER BY date DESC");
+	$stmt->bindValue(':subcatID', $subcatID, PDO::PARAM_INT);
+	$stmt->bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
+	$stmt->bindParam(':date', $date_fin, PDO::PARAM_STR);
+	$stmt->execute();
+	$stakes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+	$unitPrice = $monthlyPrice = 0;
+	foreach($stakes as $row) {
+		$unitPrice += $row['unitPrice'];
+		$monthlyPrice += $row['monthlyPrice'];
+	}
+
+	switch(true){
+		case($unitPrice > 0 && $monthlyPrice > 0):
+			$noBrake = 1;
+
+		
+		case($monthlyPrice > 0):
+			$i = 1;
+			while($i < 13) {
+				if($i < 10)	$date = $year . '-0' . $i . '-01';
+				else 		$date = $year . $i . '-01';
+
+				foreach($stakes as $row) {
+					if($row['date'] <= $date) {
+						$total_subcategory += $row['monthlyPrice'];
+						break;
+					}
+				}
+				$i++;
+			}
+			if(!isset($noBreak)) break;
+		
+		case($unitPrice > 0):
+			$stmt2 = $pdo->prepare("SELECT DISTINCT date 
+									FROM visits
+									WHERE locationID = :locationID
+										AND DATE_FORMAT(visits.date, '%Y') = :year
+										AND price_total > 0 
+										AND state = 10
+									");
+			$stmt2->bindValue(':year', $year, PDO::PARAM_STR);
+			$stmt2->bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
+			$stmt2->execute();
+			$dates = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+			foreach($dates as $row_date) {
+				foreach($stakes as $row) {
+					if($row['date'] <= $row_date['date']) {
+						$total_subcategory += $row['unitPrice'];
+						break;
+					}
+				}
+			}
+			break;
+		
+		default:
+			break;
+	}
+	
+
+
+	return $total_subcategory;
+}
+
 
 function work_netto_services_options($checked = null) {
 	require($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
@@ -1112,32 +1164,29 @@ function work_netto_services_options($checked = null) {
 		");
 	$stmt->execute();
 	
-	echo '<div class="row">';
-		echo '<label>'. lang::HDR_SERVICES_NETTO.':</label>';
-		echo '<div class="flex">';
-		$count = 0;
-		while($row[$count] = $stmt->fetch(PDO::FETCH_ASSOC))  {
-			 $key = $row[$count]['id'];
-			 $val = $row[$count]['name'];
+	echo '<label>'. lang::HDR_SERVICES_NETTO.':*</label>';
+	echo '<div class="row col-2e">';
+	$count = 0;
+	while($row[$count] = $stmt->fetch(PDO::FETCH_ASSOC))  {
+			$key = $row[$count]['id'];
+			$val = $row[$count]['name'];
+		
+		echo '<div class="flex">
+			<input name="serv_work[]" type="checkbox" value="' . $key .'"';
+			switch(true)
+			{
+				case ($checked != null && in_array($key, $haystack)):
+					echo 'checked';
+					break;
+			}
 			
-			echo '<div class="inline">
-				<input name="serv_work[]" type="checkbox" value="' . $key .'"';
-				switch(true)
-				{
-					case ($checked != null && in_array($key, $haystack)):
-						echo 'checked';
-						break;
-				}
-				
-				echo '>
-				<label for="serv_work[]">' . $val . ' </label>';
-			echo '</div>';
-			
-			$count++;
-		}
+			echo '>
+			<label for="serv_work[]">' . $val . ' </label>';
 		echo '</div>';
+		
+		$count++;
+	}
 	echo '</div>';
-	
 }
 
 
@@ -1155,7 +1204,8 @@ function header_loc($text = null) {
 		} else {
 			echo location_options(1, 'active');
 			if ($_GET['loc'] != '' || $_SESSION['locationSelected'] !='') { // проверяем, выбран ли салон 
-			} else {	include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');
+			} else {	
+				include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');
 				exit;
 			}	
 		}
@@ -1256,18 +1306,15 @@ function weekday_select($selected=null){
 		7 => lang::SUNDAY
 	);
 	
-echo '<div class="row">
-		<label for="weekday">' . lang::HDR_WEEKDAY . ':</label>
-		<select name="weekday">';
-			echo '<option value="">' . lang::SELECT_DEFAULT . '</option>';
-			foreach($days as $k => $v) {
-				echo '<option value="'.$k.'" ';
-					if($k == $selected && $selected != '') echo 'selected';
-				echo '>' . $v . '</option>';
-			}
-		echo '</select>';
-echo '</div>';
-	
+echo '<label for="weekday">' . lang::HDR_WEEKDAY . ':</label>
+<select name="weekday">';
+	echo '<option value="">' . lang::SELECT_DEFAULT . '</option>';
+	foreach($days as $k => $v) {
+		echo '<option value="'.$k.'" ';
+			if($k == $selected && $selected != '') echo 'selected';
+		echo '>' . $v . '</option>';
+	}
+echo '</select>';	
 }
 
 function weekdays($date) {
@@ -1911,6 +1958,18 @@ function cosm_history_sales($cosmID, $offset=0, $limit=10) {
 			echo list_navigation_buttons($count,$offset,$limit, null, 'sale');
 		} else echo '<p>' . lang::ERR_NO_INFO . '</p>';
 	echo '</div>';
+}
+
+function get_sum_from_array($array, $approx = 0) {
+	//избегаем ошибки, при которой функции MAX подается только один параметр
+	//Если округление не нужно, $approx должен быть отрицательным числом
+	if(is_array($array)) {
+		$res =  array_sum($array);
+	} else {
+		$res = $array;
+	}
+	if ($approx >= 0) return correctNumber($res,$approx);
+	else return $res;
 }
 
 ?>

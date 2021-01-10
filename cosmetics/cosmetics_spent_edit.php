@@ -67,10 +67,10 @@ echo '<section class="content">';
 	include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');
 	echo '<h2>'. $data['name'] .'</h2>';?>
 	<form method="post">
-		<fieldset>
+		<fieldset class="noBorders noPadding">
 			<div class="row">
 				<label for="volume"><?=lang::H2_HISTORY_WORK;?>*:</label>
-				<input name="volume" type="number" min="0" placeholder="<?php echo $data['volume']; ?>" required autofocus />
+				<input name="volume" type="number" class="short" min="0" placeholder="<?php echo $data['volume']; ?>" required autofocus />
 			</div>
 			<input name="old_cost" type="hidden" value="<?=$data['cost'];?>" />
 			<input name="old_volume" type="hidden" value="<?=$data['volume'];?>" />

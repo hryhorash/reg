@@ -39,7 +39,7 @@ switch (true)
 		{
 			try 
 			{
-				$stmt -> bindParam(':id', $id, PDO::PARAM_INT);
+				$stmt -> bindValue(':id', $id, PDO::PARAM_INT);
 				$stmt -> bindValue(':archive', $archive, PDO::PARAM_INT);
 				$stmt ->execute();
 				while($locations[$count] = $stmt->fetch(PDO::FETCH_ASSOC))	$count++;
@@ -47,7 +47,7 @@ switch (true)
 
 		}
 }
-		
+
 $pdo=NULL;
 
 // Кнопки управления доступом
@@ -90,7 +90,7 @@ echo '<section class="content">';
 		<table class='stripy table-autosort table-autofilter'>
 			<thead>
 				<tr>
-					<th style='max-width: 10%;'>№			</th>
+					<th style='width:man-content;'>№			</th>
 					<th class='table-sortable:*'><?=lang::HDR_CITY;?></th>
 					<th>						 <?=lang::HDR_LOCATION;?></th>
 					<th class='table-sortable:*'><?=lang::HDR_OPERATING_HOURS;?></th>

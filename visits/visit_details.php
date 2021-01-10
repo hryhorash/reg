@@ -533,7 +533,7 @@ if(!isset($_GET['recover'])) unset($_SESSION['temp']);
 if($_GET['date'] != '') $_SESSION['temp']['date'] = $_GET['date'];
 if($_GET['timeFrom'] !='') $_SESSION['temp']['startTime'] = $_GET['timeFrom'];
 
-if ($_GET['id'] != '') {
+if ($_GET['id'] != '') { 
 	
 	$visit = $pdo->prepare("SELECT visits.id, visits.date, startTime, endTime, visits.state, visits.price_total, visits.netto as total_netto, visits.comment, visits.locationID
 				
@@ -665,9 +665,9 @@ $minTotal = $maxTotal = 0;
 if(isset($_GET['new'])) $title=lang::HDR_NEW_VISIT;
 $_SESSION['temp']['visitID'] = $_GET['id'];
 
-$workRowTemplate = '<div class="row nested">
+$workRowTemplate = '<div class="row col-6__2wide">
 		<input name="workNames[]"   type="text" 	placeholder="'.lang::HDR_WORKTYPE.'" />
-		<select name="staff[]" style="margin-left:10px;">
+		<select name="staff[]" class="mobile-2-span3">
 			<!--option value=""-->' . /*lang::HDR_EMPLOYEE.*/ '<!--/option-->
 		</select>
 		<input name="minPrice[]" type="number"	class="short input-hdr" value="0" tabindex="-1" readonly />
@@ -677,31 +677,30 @@ $workRowTemplate = '<div class="row nested">
 		<input name="rate[]"   type="hidden"  									 />
 		<input name="price_old[]" type="hidden"	 	 />
 		<input name="workID[]"   type="hidden"  									 />
-		<i class="fas fa-times inline-fa work" title="'.lang::HANDLING_DELETE.'"></i>
+		<i class="fas fa-times  work" title="'.lang::HANDLING_DELETE.'"></i>
 	</div>';
 
-$staffTemplate='<div class="row nested">
+$staffTemplate='<div class="row col-5__1st_wide">
 		<input name="staffName[]" type="text" class="input-hdr" />
+		<i class="far fa-comment fa-2x" title="'.lang::HDR_COMMENT.'"></i>
 		<input name="staffID[]" type="hidden" />
 		<input name="staffPrices[]" 	type="number"   step="0.01" class="medium" readonly />
 		<input name="staff_wage[]" 		type="number" 	step="0.01" class="medium" required/>
 		<input name="staffTips[]" 		type="number" 	step="0.01" class="medium" />
-		<i class="far fa-comment fa-2x" title="'.lang::HDR_COMMENT.'" style="margin: auto -40px auto 0;"></i>
 	</div>
 	<div class="row" style="display:none;">
 		<textarea name="staffComments[]" placeholder="'.lang::HDR_COMMENT.'" ></textarea>
 	</div>';
 
 	
-$nettoTemplate='<div class="row nested">
+$nettoTemplate='
 		<input name="nettoNames[]" 		type="text"   class="input-hdr" tabindex="-1" readonly	/>
-		<input name="nettoCost[]" 		type="number" class="short"  />
-	</div>';
+		<input name="nettoCost[]" 		type="number" class="short"  />';
 
 						
 
-$spentTemplate = '<div class="row nested">
-		<i class="fas fa-arrows-alt-v" style="margin: auto -13px;"></i>
+$spentTemplate = '<div class="row col-5__1wide">
+		<i class="fas fa-arrows-alt-v"></i>
 		<input name="cosmNames[]" 	  type="text"  class="mobile-wide" placeholder="'.lang::HDR_ITEM_NAME.'"										 />
 		<input name="spentV[]" 	  type="number" min="0" step="1"	class="short" 	 />
 		<input name="spentC[]" type="number" step="0.01"	class="input-hdr short" tabindex="-1" readonly';
@@ -711,10 +710,10 @@ $spentTemplate = '<div class="row nested">
 		<input name="balanceGr[]"  type="hidden"  />
 		<input name="cosmV[]" 	   type="hidden"  />
 		<input name="pcsOut[]" 	   type="hidden"  />
-		<i class="fas fa-times inline-fa spent" title="'.lang::HANDLING_DELETE.'"></i>
+		<i class="fas fa-times  spent" title="'.lang::HANDLING_DELETE.'"></i>
 	</div>';
 	
-$soldtemplate = '<div class="row nested">
+$soldtemplate = '<div class="row col-5__1st_wide">
 		<input name="soldName[]" type="text" class="mobile-wide" placeholder="'.lang::HDR_ITEM_NAME.'" />
 		<input name="qty[]" type="number" class="short" step="1"   />
 		<input name="priceSold[]" type="number" class="short" step="0.01" />
@@ -722,7 +721,7 @@ $soldtemplate = '<div class="row nested">
 		<input name="sold_cosmID[]" type="hidden" />
 		<input name="sell_netto[]" type="hidden" />
 		<input name="sell_available[]" type="hidden" />
-		<i class="fas fa-times inline-fa sales" title="'.lang::HANDLING_DELETE.'"></i>
+		<i class="fas fa-times  sales" title="'.lang::HANDLING_DELETE.'"></i>
 	</div>';
 
 if(!isset($_GET['recover'])) {
@@ -816,29 +815,21 @@ echo '<section class="content">';
 		<form method="post" id="form">
 			<fieldset>
 				<p class="title"><?=lang::HDR_VISIT_DATA;?></p>
+				<div class="row col-2">
 				<?=location_options(1, null, $_SESSION['temp']['locationID'], 1);?>
-				<div class="row">
 					<label for="date"><?=lang::DATE;?>:</label>
 					<input name="date" type="date" value="<?=$_SESSION['temp']['date'];?>" required />
-				</div>
-				<div class="row">
 					<label for="startTime"><?=lang::HDR_TIME_FROM;?>:</label>
 					<select name="startTime" required />
 						<?=time_options($_SESSION['temp']['startTime']);?>
 					</select>
-				</div>
-				<div class="row">
 					<label for="endTime"><?=lang::HDR_TIME_TO;?>:</label>
 					<select name="endTime" required />
 						<?=time_options($_SESSION['temp']['endTime'], 0, $start[0]);?>
 					</select>
-				</div>
-				<div class="row">
 					<label for="clientID"><?=lang::TBL_CLIENT;?>:</label>
 					<input name="customers" class="FIO" placeholder="<?=lang::SEARCH_CLIENT_PLACEHOLDER;?>" value="<?php if(isset($_SESSION['temp']['customers'])) echo htmlspecialchars($_SESSION['temp']['customers']); else echo FIO($_SESSION['temp']['clientName'],$_SESSION['temp']['clientSurname'],$_SESSION['temp']['prompt']);?>" autocomplete="off">
 					<input name="clientID" type="hidden" value="<?=$_SESSION['temp']['clientID'];?>">
-				</div>
-				<div class="row">
 					<label for="state"><?=lang::HDR_VISIT_STATE;?>:</label>
 					<select name="state" required />
 						<?=visit_state_select($_SESSION['temp']['state']);?>
@@ -852,108 +843,101 @@ echo '<section class="content">';
 				
 				<p class="title"><?=lang::HDR_WORKTYPE_LIST;?></p>
 				<div id="works">
-					<div class="row nested">
+					<div class="row col-6__2wide">
 						<input class="input-hdr bold" 		 value="<?=lang::HDR_WORKTYPE;?>" disabled />
-						<input class="input-hdr bold" 		 value="<?=lang::HDR_EMPLOYEE;?>" disabled />
-						<input class="input-hdr bold short " value="min,<?=curr();?>" 		disabled />
-						<input class="input-hdr bold short " value="max,<?=curr();?>" 		disabled />
-						<input class="input-hdr bold short " value="<?=curr();?>" 		disabled />
+						<input class="input-hdr bold mobile-2-span2" value="<?=lang::HDR_EMPLOYEE;?>" disabled />
+						<input class="input-hdr bold short" value="min,<?=curr();?>" 	disabled />
+						<input class="input-hdr bold short" value="max,<?=curr();?>" 	disabled />
+						<input class="input-hdr bold short" value="<?=curr();?>" 		disabled />
+						<div style="width:2ch;"></div>
 					</div>
 				
 					<?php 
 					while($work_IDs[$i] != null) {
-						echo '<div class="row nested">
+						echo '<div class="row col-6__2wide">
 							<input name="workNames[]" 		type="text"   class="input-hdr"		  value="' . htmlspecialchars($work_names[$i]) . '" 	tabindex="-1"  readonly	/>
-							<select name="staff[]" 	class="input-hdr" readonly>
+							<select name="staff[]" 	class="input-hdr mobile-2-span3" readonly>
 								<option value="' . $userIDs[$i] . '">' . htmlspecialchars($userNames[$i]) . '</option>
 							</select>
 							<input name="minPrice[]" 		type="number" class="input-hdr short" value="' . $work_minPrices[$i] . '" tabindex="-1" readonly  />
 							<input name="maxPrice[]" 		type="number" class="input-hdr short" value="' . $work_maxPrices[$i] . '" tabindex="-1" readonly  />
 							<input name="price[]" 			type="number" class="short bold" 	  value="' . $work_prices[$i] . '" />
-							<input name="catID[]" 			type="hidden" 						  value="' . $catIDs[$i] . '" 				/>
-							<input name="rate[]" 			type="hidden" 						  value="' . $rates[$i] . '" 				/>
+							<input name="catID[]" 			type="hidden" 						  value="' . $catIDs[$i] . '" />
+							<input name="rate[]" 			type="hidden" 						  value="' . $rates[$i] . '" />
 							<input name="price_old[]" 		type="hidden" 					 	  value="' . $work_prices_old[$i] . '" />
-							<input name="workID[]" 			type="hidden" 						  value="' . $work_IDs[$i] . '" 				/>
-							<input name="visits_worksIDs[]" type="hidden" 						  value="' . $visits_worksIDs[$i] . '" 			/>'; //id уже внесенного
-							echo '<i class="fas fa-times inline-fa work" title="'.lang::HANDLING_DELETE.'"></i>';
-						echo '</div>';
+							<input name="workID[]" 			type="hidden" 						  value="' . $work_IDs[$i] . '" />
+							<input name="visits_worksIDs[]" type="hidden" 						  value="' . $visits_worksIDs[$i] . '" />'; //id уже внесенного
+							echo '<i class="fas fa-times  work" title="'.lang::HANDLING_DELETE.'"></i>
+						</div>';
 						$minTotal = $minTotal + $work_minPrices[$i];
 						$maxTotal = $maxTotal + $work_maxPrices[$i];
 						$i++;
 					}
-					
+						
 					if(isset($_GET['new']) && !isset($_GET['recover'])) {
 						echo $workRowTemplate;
 						$i++;
 					} ?>
-					
 				</div>
 				<input type="button" value="<?=lang::BTN_ADD_WORK;?>" onclick="workAdd();" />
-				<div class="row nested">
-					<input class="input-hdr bold" 								 value="<?=lang::HDR_TOTAL_PRICE_RANGE;?>" 		disabled />
+				<div class="row col-6__2wide">
+					<input class="input-hdr bold" style="grid-column: 1 / 3;"    value="<?=lang::HDR_TOTAL_PRICE_RANGE;?>" 		disabled />
 					<input class="input-hdr bold short" name="min" type="number" value="<?=correctNumber($minTotal,2);?>" 	readonly />
 					<input class="input-hdr bold short" name="max" type="number" value="<?=correctNumber($maxTotal,2);?>" 	readonly />
-					<input name="price_total" class="mobile-wide input-hdr short bold" style="font-size: x-large; width: 100px; margin:5px -35px 5px 0;" value="<?=$_SESSION['temp']['price_total'];?>" type="number" step="0.01" />
+					<input name="price_total" class="mobile-wide input-hdr short bold" class="results" value="<?=$_SESSION['temp']['price_total'];?>" type="number" step="0.01" />
+					<div style="width: 2ch;"></div>
 				</div> 
 				
 				<!----------------- СЕБЕСТОИМОСТЬ ---------------->
 				
-				
-				<p class="title"><?=lang::HDR_NETTO_SEVICES;?>*</p>
-				
-				
-				<div class="row nested">
-					<input class="input-hdr bold mobile-wide" 		 value="<?=lang::HDR_ITEM_NAME;?>" disabled />
-					<input class="input-hdr bold short " value="<?=curr();?>" 		disabled />
-				</div>
-				<div id="netto">
-				
-					<?php 
-					while($_SESSION['temp']['netto'][$n] != null) {
-						echo '<div class="row nested">
-							<input name="nettoNames[]" 		type="text"   class="input-hdr mobile-wide"	value="' . $_SESSION['temp']['netto'][$n]['nettoName'] . '" readonly	/>
-							<input name="nettoCost[]" 		type="number" class="short" 	value="' . $_SESSION['temp']['netto'][$n]['nettoCost'] . '" readonly />';
-							
-						echo '</div>';
-						$totalNetto = $totalNetto + $_SESSION['temp']['netto'][$n]['nettoCost'];
-						$n++;
-					}
+				<section id="nettoData">
+					<p class="title"><?=lang::HDR_NETTO_SEVICES;?>*</p>
 					
-					if(isset($_GET['new']) && !isset($_GET['recover'])) {
-						echo '
-							<input name="nettoNames[]"	type="hidden"	disabled />
-							<input name="nettoCost[]"	type="hidden"	disabled />
-						';
-					}
 					
-					 ?>
-					
-				</div>
-				<div class="row nested">
-					<input class="input-hdr bold alignRight mobile-wide" 	value="<?=lang::HDR_TOTAL;?>" disabled />
-					<input class="bold short" name="netto_total" type="number" value="<?=correctNumber($_SESSION['temp']['total_netto'],2);?>" 	 />
-				</div> 
-				<p class="small italic">* <?=lang::EXPL_NETTO_PRICE;?></p>
-				
-				
-				
-				
-				
-				
-				
-				<div id="spentData">
-					<p class="title"><?=lang::HDR_SPENT_LIST;?></p>
-					<div class="row nested">
-						<input type="text" class="mobile-wide input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
-						<input type="text" class="input-hdr bold short" value="<?=lang::HDR_SPENT_VOLUME;?>" disabled />
-						<input type="text" class="input-hdr bold short" value="<?=curr();?>" disabled <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> />
-					</div>	
-					<div id="spentLines">
+					<div id="netto" class="row col-2__1wide">
+						<input class="input-hdr bold" 		 value="<?=lang::HDR_ITEM_NAME;?>" disabled />
+						<input class="input-hdr bold short " value="<?=curr();?>" 		disabled />
 					
 						<?php 
+						while($_SESSION['temp']['netto'][$n] != null) {
+								echo '<input name="nettoNames[]" 		type="text"   class="input-hdr"	value="' . $_SESSION['temp']['netto'][$n]['nettoName'] . '" readonly	/>
+								<input name="nettoCost[]" 		type="number" class="short" 	value="' . $_SESSION['temp']['netto'][$n]['nettoCost'] . '" readonly />';
+								
+							$totalNetto = $totalNetto + $_SESSION['temp']['netto'][$n]['nettoCost'];
+							$n++;
+						}
+						
+						if(isset($_GET['new']) && !isset($_GET['recover'])) {
+							echo '
+								<input name="nettoNames[]"	type="hidden"	disabled />
+								<input name="nettoCost[]"	type="hidden"	disabled />
+							';
+						}
+						
+						?>
+						
+					</div>
+					<div class="row col-2__1wide">
+						<input class="input-hdr bold alignRight mobile-wide" 	value="<?=lang::HDR_TOTAL;?>" disabled />
+						<input class="bold short" name="netto_total" type="number" value="<?=correctNumber($_SESSION['temp']['total_netto'],2);?>" 	 />
+					</div> 
+					<p class="small italic">* <?=lang::EXPL_NETTO_PRICE;?></p>
+				</section>
+				
+				<section id="spentData">
+					<p class="title"><?=lang::HDR_SPENT_LIST;?></p>
+					<div id="spentLines">
+						<div class="row col-5__1wide">
+							<div style="width:2ch"></div>
+							<input type="text" class="mobile-wide input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
+							<input type="text" class="input-hdr bold short" value="<?=lang::HDR_SPENT_VOLUME;?>" disabled />
+							<input type="text" class="input-hdr bold short" value="<?=curr();?>" disabled <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> />
+							<div style="width:3ch"></div>
+						</div>
+						<?php 
 						while($_SESSION['temp']['spent'][$count] != null) {
-							echo '<div class="row nested">
-								<i class="fas fa-arrows-alt-v" style="margin: auto -13px;"></i>
+							echo '<div class="row col-5__1wide">
+								<i class="fas fa-arrows-alt-v"></i>
 								<input name="cosmNames[]" type="text" class="mobile-wide input-hdr" value="'.htmlspecialchars($_SESSION['temp']['spent'][$count]['cosmNames']).'" readonly/>
 								<input name="spentV[]" type="number" class="short" step="1"    value="'.$_SESSION['temp']['spent'][$count]['spentV'].'" />
 								<input name="spentC[]" type="number" class="short" step="0.01" value="'.$_SESSION['temp']['spent'][$count]['spentC'].'" readonly '; 
@@ -966,34 +950,37 @@ echo '<section class="content">';
 								<input name="balanceGr[]" type="hidden" value="'.$_SESSION['temp']['spent'][$count]['balanceGr'].'" />
 								<input name="cosmV[]" type="hidden" value="'.$_SESSION['temp']['spent'][$count]['cosmV'].'" />
 								<input name="pcsOut[]" type="hidden" value="'.$_SESSION['temp']['spent'][$count]['pcsOut'].'" />
-								<i class="fas fa-times inline-fa spent" title="'.lang::HANDLING_DELETE.'"></i>
+								<i class="fas fa-times  spent" title="'.lang::HANDLING_DELETE.'"></i>
 							</div>';
 							$count++;
 						}?>
 					</div>	
 					<input type="button" value="<?=lang::BTN_ADD_SPENT;?>" onclick="spentAdd();" />
-					<div class="row nested"  
+					<div class="row col-5__1wide"  
 						<?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?>
 					>
+						<div></div>
 						<input type="text" class="input-hdr bold" value="<?=lang::HDR_TOTAL;?>" disabled />
 						<input name="totalSpentV" type="number" class="input-hdr bold short" value="<?=correctNumber($_SESSION['temp']['totalSpentV'],0);?>" readonly />
 						<input name="totalSpentC" type="number" class="input-hdr bold short" value="<?=correctNumber($_SESSION['temp']['totalSpentC'],0);?>" readonly />
+						<div style="width:3ch;"></div>
 					</div>	
-				</div>
+				</section>
 				
-				<div id="salesData">
+				<section id="salesData">
 					<p class="title"><?=lang::HDR_SALES_LIST;?></p>
-					<div class="row nested">
+					<div class="row col-5__1st_wide">
 						<input type="text" class="mobile-wide input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
 						<input type="text" class="input-hdr bold short" value="<?=lang::PLACEHOLDER_QTY;?>" disabled />
 						<input type="text" class="input-hdr bold short" value="<?=lang::HDR_PRICE;?>" disabled />
-						<input type="text" class="input-hdr bold short" value="<?=lang::HDR_TOTAL;?>" disabled />
+						<input type="text" class="input-hdr bold short mobile-hide" value="<?=lang::HDR_TOTAL;?>" disabled />
+						<div style="width:3ch;"></div>
 					</div>	
 					<div id="salesLines">
 					
 						<?php $s=0;
 						while($_SESSION['temp']['sales'][$s] != null) {
-							echo '<div class="row nested">
+							echo '<div class="row col-5__1st_wide">
 								<input name="soldName[]" type="text" class="mobile-wide input-hdr" value="'.htmlspecialchars($_SESSION['temp']['sales'][$s]['soldName']).'" readonly/>
 								<input name="qty[]" type="number" class="short" step="1"    value="'.$_SESSION['temp']['sales'][$s]['qty'].'" max="'.$_SESSION['temp']['sales'][$s]['qty'].'" />
 								<input name="priceSold[]" type="number" class="short" step="0.01" value="'.$_SESSION['temp']['sales'][$s]['priceSold'] / $_SESSION['temp']['sales'][$s]['qty'].'" />
@@ -1004,114 +991,118 @@ echo '<section class="content">';
 								<input name="qtyOld[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['qtyOld'].'" />
 								<input name="sell_netto[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['priceIn'].'"/>
 								<input name="sell_available[]" type="hidden" />
-								<i class="fas fa-times inline-fa sales" title="'.lang::HANDLING_DELETE.'"></i>
+								<i class="fas fa-times  sales" title="'.lang::HANDLING_DELETE.'"></i>
 							</div>';
 							$s++;
 						}?>
 					</div>	
 					<input type="button" value="<?=lang::BTN_ADD_SALE;?>" onclick="saleAdd();" />
-					<div class="row nested">
-						<input type="text" class="input-hdr bold mobile-wide" value="<?=lang::HDR_TOTAL;?>" disabled />
+					<div class="row col-5__1st_wide">
+						<input type="text" class="input-hdr bold" value="<?=lang::HDR_TOTAL;?>" disabled />
 						<input name="totalQty" type="number" class="input-hdr bold short" value="<?=$totalQty;?>" readonly />
-						<input class="input-hdr bold short" disabled />
+						<input class="input-hdr bold short mobile-hide" disabled />
 						<input name="totalSales" type="number" class="input-hdr bold short" value="<?=$totalSales;?>" readonly />
+						<div style="width:3ch;"></div>
 					</div>	
-				</div>
+				</section>
 				
-				
-				<p class="title" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> ><?=lang::HDR_COST_PER_EMPLOYEE;?></p>
-				<div class="row nested" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?>>
-					<input class="input-hdr bold mobile-wide" value="<?=lang::HDR_EMPLOYEE;?>"			  disabled />
-					<input class="input-hdr bold medium" value="<?=lang::HDR_TOTAL . ', ' . curr();?>" 						  disabled />
-					<input class="input-hdr bold medium" value="<?=lang::HDR_WAGE . ', ' . curr();?>" 				  disabled />
-					<input class="input-hdr bold medium" value="<?=lang::HDR_TIPS . ', ' . curr();?>" disabled />
-				</div>
-				<div id="employees" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?>>
-					
-						<?php
+				<section id="employeeData">
+					<p class="title" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> ><?=lang::HDR_COST_PER_EMPLOYEE;?></p>
+					<div class="row col-5__1st_wide" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?>>
+						<input class="input-hdr bold" value="<?=lang::HDR_EMPLOYEE;?>"		   disabled />
+						<div style="width:5ch;"></div>
+						<input class="input-hdr bold medium" value="<?=lang::HDR_TOTAL . ', ' . curr();?>" disabled />
+						<input class="input-hdr bold medium" value="<?=lang::HDR_WAGE . ', ' . curr();?>"  disabled />
+						<input class="input-hdr bold medium" value="<?=lang::HDR_TIPS . ', ' . curr();?>"  disabled />
+					</div>
+					<div id="employees" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?>>
 						
-						if($_GET['id'] > 0) {
-							while($staffIDs[$e] != null) {
-								echo '<div class="row nested">
-									<input name="staffName[]" 		type="text"   class="mobile-wide input-hdr"		  value="' . htmlspecialchars($staffNames[$e]) . '" 	  readonly	/>
-									<input name="staffPrices[]" 	type="number"   step="0.01" class="medium" value="' . $staffPrices[$e] . '"   />
-									<input name="staff_wage[]" 		type="number" 	step="0.01" class="medium" value="' . $staffWages[$e] . '" required />
-									<input name="staffTips[]" 		type="number" 	step="0.01" class="medium" value="' . $staffTips[$e] . '"  />
-									<input name="staffID[]" 		type="hidden"					 	  value="' . $staffIDs[$e] . '" 				/>
-									<input name="staffRowIDs[]"		type="hidden" 						  value="' . $staffRowIDs[$e] . '" 			/>'; //id уже внесенного
-									echo '<i class="far fa-comment fa-2x" title="'.lang::HDR_COMMENT.'" style="margin: auto -40px auto 0;"></i>';
-								echo '</div>';
-								echo '<div class="row"';
-									if($staffComments[$e] == '') echo 'style="display:none"';
-								echo '>
-									<textarea name="staffComments[]" placeholder="'.lang::HDR_COMMENT.'" >'.htmlspecialchars($staffComments[$e]).'</textarea>';
-								echo '</div>';
-								$e++;
-							}
-						} else if(isset($_GET['new']) && isset($_GET['recover'])) {
-							while($staffIDs[$e] != null) {
-								echo '<div class="row nested">
-									<select name="staffID[]" class="mobile-wide">' . staff_select_options($_SESSION['locationSelected'], $staffIDs[$e]) . '</select>
-									<i class="far fa-comment fa-2x" title="'.lang::HDR_COMMENT.'" style="margin: auto 0 auto 10px;"></i>
-									<input name="staffPrices[]" 	type="number"   step="0.01" class="short" value="' . $staffPrices[$e] . '"   />
-									<input name="staff_wage[]" 		type="number" 	step="0.01" class="short" value="' . $staffWages[$e] . '" required />
-									<input name="staffTips[]" 		type="number" 	step="0.01" class="short" value="' . $staffTips[$e] . '"  />
-									<i class="fas fa-times inline-fa staff" title="'.lang::HANDLING_DELETE.'"></i>
-								</div>
-								<div class="row"'; if($staffComments[$e] == '') echo 'style="display:none"'; echo '>
-									<textarea name="staffComments[]" placeholder="'.lang::HDR_COMMENT.'" >'.htmlspecialchars($staffComments[$e]).'</textarea>
-								</div>';
-								$e++;
-							}
-						} ?>
-				</div>
-				
-				<div id="totals" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> >
+							<?php
+							
+							if($_GET['id'] > 0) {
+								while($staffIDs[$e] != null) {
+									echo '<div class="row col-5__1st_wide">
+										<input name="staffName[]" 		type="text"   class="mobile-wide input-hdr"		  value="' . htmlspecialchars($staffNames[$e]) . '" 	  readonly	/>
+										<i class="far fa-comment fa-2x" title="'.lang::HDR_COMMENT.'"></i>
+										<input name="staffPrices[]" 	type="number"   step="0.01" class="medium" value="' . $staffPrices[$e] . '"   />
+										<input name="staff_wage[]" 		type="number" 	step="0.01" class="medium" value="' . $staffWages[$e] . '" required />
+										<input name="staffTips[]" 		type="number" 	step="0.01" class="medium" value="' . $staffTips[$e] . '"  />
+										<input name="staffID[]" 		type="hidden"					 	  value="' . $staffIDs[$e] . '" 				/>
+										<input name="staffRowIDs[]"		type="hidden" 						  value="' . $staffRowIDs[$e] . '" 			/>'; //id уже внесенного
+									echo '</div>';
+									echo '<div class="row"';
+										if($staffComments[$e] == '') echo 'style="display:none"';
+									echo '>
+										<textarea name="staffComments[]" placeholder="'.lang::HDR_COMMENT.'" >'.htmlspecialchars($staffComments[$e]).'</textarea>';
+									echo '</div>';
+									$e++;
+								}
+							} else if(isset($_GET['new']) && isset($_GET['recover'])) {
+								while($staffIDs[$e] != null) {
+									echo '<div class="row col-5__1st_wide">
+										<select name="staffID[]" class="mobile-wide">' . staff_select_options($_SESSION['locationSelected'], $staffIDs[$e]) . '</select>
+										<i class="far fa-comment fa-2x" title="'.lang::HDR_COMMENT.'"></i>
+										<input name="staffPrices[]" 	type="number"   step="0.01" class="short" value="' . $staffPrices[$e] . '"   />
+										<input name="staff_wage[]" 		type="number" 	step="0.01" class="short" value="' . $staffWages[$e] . '" required />
+										<input name="staffTips[]" 		type="number" 	step="0.01" class="short" value="' . $staffTips[$e] . '"  />
+									</div>
+									<div class="row"'; if($staffComments[$e] == '') echo 'style="display:none"'; echo '>
+										<textarea name="staffComments[]" placeholder="'.lang::HDR_COMMENT.'" >'.htmlspecialchars($staffComments[$e]).'</textarea>
+									</div>';
+									$e++;
+								}
+							} ?>
+					</div>
+				</section>
+				<section id="totals" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> >
 					<p class="title"><?=lang::HDR_VISIT_TOTALS;?></p>
-					<div class="row nested">
-						<input class="input-hdr bold mobile-wide" value="<?=lang::HDR_ITEM_NAME;?>"	  disabled />
+					<div class="row col-4__1st_wide">
+						<input class="input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>"	  disabled />
 						<input class="input-hdr bold medium" value="<?=lang::HDR_PRICE;?>" 		  disabled />
 						<input class="input-hdr bold medium" value="<?=lang::HDR_NETTO;?>" disabled />
 						<input class="input-hdr bold medium" value="<?=lang::HDR_PROFIT;?>" disabled />
 					</div>
-					<div class="row nested">
-						<input class="input-hdr mobile-wide" value="<?=lang::HDR_CUSTOMER_SERVICE;?>"	  readonly />
+					<div class="row col-4__1st_wide">
+						<input class="input-hdr" value="<?=lang::HDR_CUSTOMER_SERVICE;?>"	  readonly />
 						<input name="totals_toPay_S" class="input-hdr medium" value="" 		  readonly />
 						<input name="totals_netto_S" class="input-hdr medium" value="" readonly />
 						<input name="totals_income_S" class="input-hdr bold medium" value="" readonly />
 					</div>
-					<div class="row nested">
-						<input class="input-hdr mobile-wide" value="<?=lang::HDR_SALES_LIST;?>"	  readonly />
+					<div class="row col-4__1st_wide">
+						<input class="input-hdr" value="<?=lang::HDR_SALES_LIST;?>"	  readonly />
 						<input name="totals_toPay_sale" class="input-hdr medium" value="" 		  readonly />
 						<input name="totals_netto_sale" class="input-hdr medium" value="" readonly />
 						<input name="totals_income_sale" class="input-hdr bold medium" value="" readonly />
 					</div>				
-					<div class="row nested">
+					<div class="row col-4__1st_wide">
 						<input class="input-hdr bold" 		 value="<?=lang::HDR_TOTAL;?>"	  disabled />
+						<input class="input-hdr medium" 	  disabled />
+						<input class="input-hdr medium" 	  disabled />
 						<input name="grand_total_income" class="input-hdr bold medium results" class="results" disabled />
 					</div>
 					
-				</div>
+				</section>
 				<input type="hidden" name="del_visit">
 			</fieldset>
-			
-			<?php
-			if($_GET['goto'] == 'profile') {
-				echo '<a class="button" href="/clients/client_profile.php?id=' . $_SESSION['temp']['clientID'];
-			} else if($_GET['goto'] == 'dashboard') {
-				echo '<a class="button" href="/user/dashboard.php?date='.$_SESSION['temp']['date'];
-			} else {
-				echo '<a class="button" href="/visits/visits_list.php?state=all&date='.$_SESSION['temp']['date'];
-			}
-			
-			echo '" style="display: inline-block;margin: 5px 0;">'. lang::BTN_CANCEL .'</a>';
-			
-			if($_SESSION['pwr'] > 89 && !isset($_GET['new'])) {
-				echo '<button class="middle-form-button del_visit"><i class="fas fa-times" title="'.lang::HANDLING_DELETE.'"></i>'.lang::HANDLING_DELETE.'</button>';
-			}
-			
-			echo '<input type="submit" id="submit" value="'.lang::BTN_SAVE.'" style="float: right;"/>';
-		echo '</form>';
+			<div class="row col-3">
+				<?php
+				if($_GET['goto'] == 'profile') {
+					echo '<a class="button" href="/clients/client_profile.php?id=' . $_SESSION['temp']['clientID'];
+				} else if($_GET['goto'] == 'dashboard') {
+					echo '<a class="button" href="/user/dashboard.php?date='.$_SESSION['temp']['date'];
+				} else {
+					echo '<a class="button" href="/visits/visits_list.php?state=all&date='.$_SESSION['temp']['date'];
+				}
+				
+				echo '" >'. lang::BTN_CANCEL .'</a>';
+				
+				if($_SESSION['pwr'] > 89 && !isset($_GET['new'])) {
+					echo '<button class="del_visit" style="place-self: center;"><i class="fas fa-times" title="'.lang::HANDLING_DELETE.'"></i>'.lang::HANDLING_DELETE.'</button>';
+				} else echo '<b></b>';
+				
+				echo '<input type="submit" id="submit" value="'.lang::BTN_SAVE.'" style="justify-self: end;"/>
+			</div>
+		</form>';
 		
 	 } else {
 		echo lang::ERR_NO_ID;
@@ -1144,6 +1135,7 @@ include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');?>
 <script>
 	const ratesJson = <?=json_encode($staff_rates);?>;
 	const alert_txt = '<?=lang::ALERT_DELETE;?>';
+	const alert_future_date = '<?=lang::ALERT_WRONG_DATE_STATE;?>';
 	
 </script>
 <script src = "/js/visit_details.js"></script>

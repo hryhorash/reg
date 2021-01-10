@@ -54,7 +54,7 @@ echo '<section class="content">';
 	echo '<h2>' . $data['category'] . '</h2>';?>
 
 	<form action="<?php $_SERVER['PHP_SELF'].'tab=active'?>" method="post">
-		<fieldset>
+		<fieldset class="noBorders noPadding">
 			<div class="row">
 				<label for="category"><?=lang::HDR_CATEGORY;?>*:</label>
 				<input name="category" class="expences_cat" type="text" value="<?=$data['category']?>" required autofocus />

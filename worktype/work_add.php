@@ -52,31 +52,26 @@ echo '<section class="content">';
 	echo '<h2>'. lang::H2_WORKTYPE_NEW .'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="name" type="text" value="<?=$_SESSION['temp']['name']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="catID"><?=lang::HDR_WORKTYPE_CAT;?>*:</label>
 				<select name="catID" required />
-					<?=work_cat_select();?>
+					<?=work_cat_select($_SESSION['temp']['catID']);?>
 				</select>
-			</div>
-			<div class="row">
+			
 				<label for="target"><?=lang::HDR_WORKTYPE_TARGET;?>*:</label>
 				<select name="target" type="text" required />
-					<?=target_select();?>
+					<?=target_select($_SESSION['temp']['target']);?>
 				</select>
-			</div>	
-			<div class="row">
+			
 				<label for="minPrice"><?=lang::HDR_WORKTYPE_MINPRICE;?>*:</label>
 				<input name="minPrice" type="number" min="0" step="0.01" value="<?=$_SESSION['temp']['minPrice']; ?>" required />
-			</div>	
-			<div class="row">
+			
 				<label for="maxPrice"><?=lang::HDR_WORKTYPE_MAXPRICE;?>*:</label>
 				<input name="maxPrice" type="number" min="0" step="0.01" value="<?=$_SESSION['temp']['maxPrice']; ?>" required />
-			</div>	
-			<div class="row">
+			
 				<label for="duration"><?=lang::HDR_AVG_DURATION;?>*:</label>
 				<select name="duration" required />
 					<?=event_duration_select($_SESSION['temp']['duration']);?>
@@ -87,13 +82,6 @@ echo '<section class="content">';
 	<input type="submit" value="<?=lang::BTN_ADD; ?>" />
 	</form>
 </section>
-
-<script>
-$(document).ready(function(){
-	$('select[name="target"]').val('<?=$_SESSION['temp']['target'];?>');
-	$('select[name="catID"]').val('<?=$_SESSION['temp']['catID'];?>');
-});
-</script>
 
 <?php 
 unset($_SESSION['temp']);

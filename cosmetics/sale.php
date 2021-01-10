@@ -148,6 +148,7 @@ echo '<section class="content">';
 					}
 					$count++;
 				} ?>
+				<tfoot>
 				<tr>
 					<th>			</th>
 					<?php if ($brandID == 1) echo '<th></th>'; ?>
@@ -157,6 +158,7 @@ echo '<section class="content">';
 					<th class="mobile-hide"></th>
 					<th class="mobile-hide"></th>
 				</tr>
+			</tfoot>
 			</tbody>	
 		</table>
 

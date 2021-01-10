@@ -84,16 +84,23 @@ echo '<section class="sidebar">';
 	echo tabs($tabs);
 echo '</section>';
 echo '<section class="content">';
+
+	echo '<style>	
+		label {grid-row: 1 / 2;}
+		input[name="date"] {grid-column: 1/2;}
+		select[name="weekday"] {grid-column: 2/3;}
+		select[name="even"] {grid-column: 3/4;}
+	</style>';
 	include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');
 	echo '<h2>'. $title .'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-3">
 				<label for="date"><?=lang::DATE;?>:</label>
 				<input name="date" type="date" value="<?php echo $data['date']; ?>" />
+				<?php echo weekday_select($data['weekday']); ?>
+				<?php echo even_select($data['even']); ?>
 			</div>
-			<?php echo weekday_select($data['weekday']); ?>
-			<?php echo even_select($data['even']); ?>
 			<div class="row">
 				<textarea name="comment" placeholder="<?=lang::COMMENT_PLACEHOLDER;?>"><?=$data['comment']; ?></textarea>
 			</div>
@@ -103,7 +110,6 @@ echo '<section class="content">';
 		<input type="submit" value="<?php echo lang::BTN_CHANGE; ?>" />
 	</form>
 </section>
-<script src="/user/workday_select_controller.js"></script>
 <?php 
 include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');	
 ?> 

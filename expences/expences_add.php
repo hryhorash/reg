@@ -57,29 +57,23 @@ echo '<section class="content">';
 
 	<form action="<?=$_SERVER['PHP_SELF'];?>" method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="date"><?=lang::DATE;?>*:</label>
 				<input name="date" type="date" value="<?=defaultDate();?>" required />
-			</div>
-			<?php echo location_options(1, null, null, 1); ?>
 			
-			<div class="row">
+				<?php echo location_options(1, null, null, 1); ?>
+			
 				<label for="category"><?=lang::HDR_CATEGORY;?>*:</label>
 				<select name="category" id="category">
 					<?=cat_list(1,$_SESSION['temp']['category']); ?>
 				</select>
-			</div>
-			<div class="row">
+			
 				<label for="subcatID"><?=lang::HDR_SUBCATEGORY;?>*:</label>
-				<select name="subcatID" id="subcategory" required>
-					
-				</select>
-			</div>
-			<div class="row">
+				<select name="subcatID" id="subcategory" required></select>
+			
 				<label for="item"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="item" type="text" value="<?=$_SESSION['temp']['item'];?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="price"><?=lang::HDR_COST;?>*:</label>
 				<input name="price" type="number" step="any" value="<?=$_SESSION['temp']['price'];?>" required />
 			</div>

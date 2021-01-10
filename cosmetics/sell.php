@@ -79,26 +79,25 @@ echo '<section class="content">';
 	
 	<form method="post">
 		<fieldset>
-			<?=location_options(1, null, $_SESSION['temp']['locationID'], 1);?>
-			<div class="row">
+			<div class="row col-2 ">
+				<?=location_options(1, null, $_SESSION['temp']['locationID'], 1);?>
+			
 				<label for="dateOut"><?=lang::DATE;?>*:</label>
 				<input name="dateOut" type="date" value="<?=$_SESSION['temp']['dateOut'];?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="clientID"><?=lang::TBL_CLIENT;?>:</label>
 				<input name="customers" class="FIO" placeholder="<?=lang::SEARCH_CLIENT_PLACEHOLDER;?>" value="<?=$_SESSION['temp']['customers'];?>" autocomplete="off">
 				<input name="clientID" type="hidden" value="<?=$_SESSION['temp']['clientID'];?>">
 			</div>
 				
-				
-			<div class="row nested">
+			<div class="row col-4__1st_wide">
 				<input type="text" class="mobile-wide input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
 				<input type="text" class="input-hdr bold short" value="<?=lang::PLACEHOLDER_QTY;?>" disabled />
 				<input type="text" class="input-hdr bold short" value="<?=lang::HDR_PRICE;?>" disabled />
 				<input type="text" class="input-hdr bold short" value="<?=lang::HDR_TOTAL;?>" disabled />
 			</div>	
 			
-			<div class="row nested">
+			<div class="row col-4__1st_wide">
 				<input name="soldName" type="text" class="sold mobile-wide" placeholder="<?=lang::HDR_ITEM_NAME;?>" value="<?=$_SESSION['temp']['soldName'];?>" />
 				<input name="qty" type="number" class="short" step="1" value="<?=$_SESSION['temp']['qty'];?>"  />
 				<input name="priceSold" type="number" class="short" step="0.01" value="<?=$_SESSION['temp']['priceSold'];?>" />
@@ -106,11 +105,9 @@ echo '<section class="content">';
 				<input name="sold_cosmID" value="<?=$_SESSION['temp']['sold_cosmID'];?>" type="hidden" />
 				<input name="sell_netto" type="hidden" />
 				<input name="sell_available" type="hidden" />
-			</div>
 			
-			<div class="row nested">
 				<input type="text" class="input-hdr bold mobile-wide" value="<?=lang::HDR_PROFIT_TOTAL;?>" disabled />
-				<input name="totals_income_sale" type="number" class="input-hdr bold short" value="<?=$_SESSION['temp']['totals_income_sale'];?>" readonly />
+				<input name="totals_income_sale" style="grid-column:4/5;" type="number" class="input-hdr bold short" value="<?=$_SESSION['temp']['totals_income_sale'];?>" readonly />
 			</div>	
 		</fieldset>
 		<input type="submit" value="<?php echo lang::BTN_SELL; ?>" />

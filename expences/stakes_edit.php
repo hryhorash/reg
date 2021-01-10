@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if($_GET['id'] !=''){
 	try {
-		$stmt = $pdo->prepare("SELECT stakes.id , category, subcategory, date, unitPrice, monthlyPrice, stakes.locationID, catID, subcatID, inmenu
+		$stmt = $pdo->prepare("SELECT stakes.id , category, subcategory, date, unitPrice, monthlyPrice, stakes.locationID, catID, subcatID, inmenu, subcategory
 			FROM stakes
 			LEFT JOIN expences_subcat ON stakes.subcatID = expences_subcat.id
 			LEFT JOIN expences_cat ON expences_subcat.catID = expences_cat.id
@@ -107,30 +107,29 @@ echo '<section class="content">';
 
 	<form action="<?php $_SERVER['PHP_SELF'].'?tab='.$_GET['tab'];?>" method="post">
 		<fieldset>
-			<div class="row">
-				<label for="catID"><?=lang::HDR_CATEGORY;?>*:</label>
-				<select name="catID" id="category">
+			<div class="row col-2">
+				<label for="category"><?=lang::HDR_CATEGORY;?>*:</label>
+				<select name="category" id="category">
 					<?=cat_list($data['inmenu'],$data['catID']); ?>
 				</select>
-			</div>
-			<div class="row">
+			
 				<label for="subcatID"><?=lang::HDR_SUBCATEGORY;?>*:</label>
 				<select name="subcatID" id="subcategory" required>
-					
+					<option value="<?=$data['subcatID'];?>"><?=$data['subcategory'];?></option>
 				</select>
-			</div>
 			
 				<?=location_options('','',$data['locationID']); ?>
-			<div class="row">
+			
 				<label for="date"><?=lang::HDR_ACTIVE_FROM;?>*:</label>
 				<input name="date" type="date" value="<?=$data['date'];?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="price"><?=lang::HDR_COST;?>*:</label>
-				<input name="unitPrice" type="number" step="0.01" placeholder="<?=lang::PER_PIECE_PLACEHOLDER;?>" class="half-flex" style="margin-right: 10px;" value="<?=$data['unitPrice'];?>" />
-				<input name="monthlyPrice" type="number" step="0.01" placeholder="<?=lang::PER_MONTH_PLACEHOLDER;?>" class="half-flex" value="<?=$data['monthlyPrice'];?>" />
+				<div class="row" style="grid-template-columns: 1fr 1fr;">
+					<input name="unitPrice" type="number" step="0.01" placeholder="<?=lang::PER_PIECE_PLACEHOLDER;?>" class="half-flex" style="margin-right: 10px;" value="<?=$data['unitPrice'];?>" />
+					<input name="monthlyPrice" type="number" step="0.01" placeholder="<?=lang::PER_MONTH_PLACEHOLDER;?>" class="half-flex" value="<?=$data['monthlyPrice'];?>" />
+				</div>
+				
 				<input name="id" type="hidden" value="<?=$_GET['id'];?>" />
-			</div>
 		</fieldset>
 
 		<input id="button" type="submit" value="<?=lang::BTN_CHANGE;?>" />

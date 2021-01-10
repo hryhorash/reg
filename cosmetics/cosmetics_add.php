@@ -73,29 +73,26 @@ echo '<section class="content">';
 	echo '<h2>'. lang::H2_COSMETICS .'</h2>';?>
 	
 	<form method="post">
-		<fieldset>
-			<?=brand_select($_SESSION['brandID']);?>
+		<fieldset class="wSign">
+			<div class="row col-2">
+				<?=brand_select($_SESSION['brandID']);?>
 			
-			<div class="row">
 				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="name" type="text" value="<?php echo $_SESSION['temp']['name']; ?>" required autofocus />
-			</div>
-			<div class="row">
+			
 				<label for="volume"><?=lang::HDR_VOLUME;?>*:</label>
 				<input name="volume" type="number" value="<?php echo $_SESSION['temp']['volume']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="articul"><?=lang::HDR_ARTICUL;?>:</label>
 				<input name="articul" type="text" value="<?php echo $_SESSION['temp']['articul']; ?>" />
+			
+				
+				<?=cosm_purpose_select($_SESSION['purpose']);?>
 			</div>
-			
-			<?=cosm_purpose_select($_SESSION['purpose']);?>
-			
-			<div class="row" id="RRP" <?php if($_SESSION['purpose'] == 0 || $_SESSION['purpose'] == 3) echo 'style="display:none;"';?>>
+			<div class="row col-2" id="RRP" <?php if($_SESSION['purpose'] == 0 || $_SESSION['purpose'] == 3) echo 'style="display:none;"';?>>
 				<label for="RRP"><?=lang::HDR_RRP;?>:</label>
 				<input name="RRP" type="number" step="0.01" value="<?php echo $_SESSION['temp']['RRP']; ?>" />
 			</div>
-			
 			
 			<div class="row">
 				<textarea name="description" placeholder="<?=lang::HDR_DESCRIPTION;?>"><?php echo $_SESSION['temp']['description']; ?></textarea>

@@ -57,16 +57,14 @@ echo '<section class="content">';
 
 	<form action="<?php $_SERVER['PHP_SELF'].'tab=active'?>" method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="category"><?=lang::HDR_CATEGORY;?>*:</label>
 				<input name="category" class="expences_cat" id="catID" type="text" value="" required autofocus />
 				<input type="hidden" name="catID_autocomplete" >
-			</div>
-			<div class="row">
+			
 				<label for="subcategory"><?=lang::HDR_SUBCATEGORY;?>*:</label>
 				<input name="subcategory" type="text" required />
-			</div>
-			<div class="row">
+			
 				<label for="inmenu"><?=lang::HDR_SHOW_IN_MENU;?></label>
 				<div style="flex:13.7;line-height:2.9em;">
 					<input name="inmenu" value="1" type="radio" /><i class="fas fa-check marginLeft" style="color:green;"></i>

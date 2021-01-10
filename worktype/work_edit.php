@@ -65,32 +65,27 @@ echo '<section class="content">';
 	echo '<h2>'. $data['name'] .'</h2>'; ?>
 	<form method="post" action="<?php echo $_SERVER['PHP_SELF']. '?tab=active'; ?>">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="name" type="text" value="<?php echo $data['name']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="catID"><?=lang::HDR_WORKTYPE_CAT;?>*:</label>
 				<select name="catID" required />
-					<?=work_cat_select();?>
+					<?=work_cat_select(null,$data['catID']);?>
 				</select>
-			</div>
-			<div class="row">
+			
 				<label for="target"><?=lang::HDR_WORKTYPE_TARGET;?>*:</label>
 				<select name="target" type="text" required />
-					<?=target_select()?>
+					<?=target_select($data['target'])?>
 				</select>
-			</div>	
-			<div class="row">
+			
 				<label for="minPrice"><?=lang::HDR_WORKTYPE_MINPRICE;?>*:</label>
 				<input name="minPrice" type="number" min="0" step="0.01" value="<?php echo $data['minPrice']; ?>" required />
-			</div>	
-			<div class="row">
+			
 				<label for="maxPrice"><?=lang::HDR_WORKTYPE_MAXPRICE;?>*:</label>
 				<input name="maxPrice" type="number" min="0" step="0.01" value="<?php echo $data['maxPrice']; ?>" required />
 				<input name="id" type="hidden" value="<?=$_GET['id']; ?>" />
-			</div>	
-			<div class="row">
+			
 				<label for="duration"><?=lang::HDR_AVG_DURATION;?>*:</label>
 				<select name="duration" required />
 					<?=event_duration_select($data['duration']);?>
@@ -100,13 +95,6 @@ echo '<section class="content">';
 	<input type="submit" value="<?php echo lang::BTN_CHANGE; ?>" />
 	</form>
 </section>
-
-<script>
-$(document).ready(function(){
-	$('select[name="target"]').val('<?=$data['target'];?>');
-	$('select[name="catID"]').val('<?=$data['catID'];?>');
-});
-</script>
 
 <?php 
 include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');	

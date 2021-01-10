@@ -185,38 +185,35 @@ echo '<section class="content">';
 	echo '<h2>'. lang::HDR_ACCESS_EDIT .$user['name'].' '.$user['surname'].'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?=lang::NAME;?>*:</label>
 				<input name="name" type="text" value="<?php echo $user['name']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="surname"><?=lang::SURNAME;?>*:</label>
 				<input name="surname" type="text" value="<?php echo $user['surname']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="username"><?=lang::USERNAME;?>*:</label>
 				<input name="username" type="text" value="<?php echo $user['username']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="email"><?=lang::HDR_EMAIL;?>*:</label>
 				<input name="email" type="email" value="<?php echo $user['email']; ?>" required /> 
 			</div>
 			<div id="morePhones">
 				<?=phones_add($phones);?>
 			</div>
-			<div class="row">
+			<div class="row col-2">
 				<label for="role"><?=lang::HDR_ROLE;?>*:</label>
 				<select name="role" id="role" required>
 					<?php echo role_options($user['role']); ?>
 				</select>
 			</div>
 			
-			<div id="locList">
+			<div id="locList" class="row col-2">
 				<?=location_options('','',$user['locationIDs']);?>
 			</div>
 			
 			
-			<div class="row" id="basicOnly" <?php //if($user['role'] != 'basic') echo 'style="display:none;"';?>>
+			<div class="row col-2" id="basicOnly" <?php //if($user['role'] != 'basic') echo 'style="display:none;"';?>>
 				<label for="specialty[]"><?=lang::HDR_WORKTYPE_CATS;?>:</label>
 				<?=work_cat_select('check', $user['specialtyIDs'], null, $_GET['id']);?>
 			</div>
@@ -236,8 +233,8 @@ echo '<section class="content">';
 </section>
 
 <template id="rate">
-<input name="reward_rate[]" class="short" type="number" min="0" max="100" step="1" placeholder="<?=lang::HDR_RATE_PLACEHOLDER;?>" style="margin-right:10px;" required />
-<input name="reward_rate_old[]" type="hidden" value="0" />
+	<input name="reward_rate[]" class="short" type="number" min="0" max="100" step="1" placeholder="<?=lang::HDR_RATE_PLACEHOLDER;?>" style="position:absolute; right:0;" required />
+	<input name="reward_rate_old[]" type="hidden" value="0" />
 </template>
 
 

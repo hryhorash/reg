@@ -40,7 +40,7 @@ if($_GET['id'] !=''){
 
 	
 	//проверить права на редактирование воизбежание простого перебора id-шками
-	if (handle_rights('basic', $data['locationID']) != 1) 
+	if (handle_rights('basic', $data['locationID'])) 
 	{		
 		$_SESSION['error'] = lang::ERR_NO_RIGHTS;
 		session_write_close();
@@ -70,11 +70,10 @@ echo '<section class="content">';
 
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="name" type="text" value="<?=$data['name'];?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="cost"><?=lang::HDR_COST;?>*:</label>
 				<input name="cost" type="number" min="0" step="any" value="<?=$data['cost'];?>" required />
 			</div>

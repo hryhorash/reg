@@ -59,21 +59,18 @@ echo '<section class="content">';
 	echo '<h2>'. lang::HDR_NEW_LOCATION .'</h2>';?>
 	<form method="post" action="<?php echo $_SERVER['PHP_SELF']. '?tab=active'; ?>">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="city"><?=lang::HDR_CITY;?>*:</label>
 				<input name="city" type="text" value="<?php echo $_SESSION['temp']['city']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="name"><?=lang::HDR_LOCATION;?>*:</label>
 				<input name="name" type="text" value="<?php echo $_SESSION['temp']['name']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="openFrom"><?=lang::HDR_OPERATING_HOURS . lang::HDR_OPEN_FROM;?>*:</label>
 				<select name="openFrom" required>
 					<?=operating_hours($_SESSION['temp']['openFrom']);?>
 				</select>
-			</div>
-			<div class="row">
+			
 				<label for="openTill"><?=lang::HDR_OPERATING_HOURS . lang::HDR_OPEN_TILL;?>*:</label>
 				<select name="openTill" required>
 					<?=operating_hours($_SESSION['temp']['openTill']);?>

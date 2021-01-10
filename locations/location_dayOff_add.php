@@ -60,12 +60,14 @@ echo '<section class="content">';
 	echo '<h2>'. lang::HDR_NEW_DAY_OFF .'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<?php echo location_options(); ?>
-			<div class="row">
+			<div class="row col-2">
+				<?php echo location_options(); ?>
+			
 				<label for="date"><?=lang::DATE;?>*:</label>
 				<input name="date" type="date" value="<?php echo $_SESSION['temp']['date']; ?>" />
+			
+				<?php echo weekday_select(); ?>
 			</div>
-			<?php echo weekday_select(); ?>
 			<div class="row">
 				<textarea name="comment" placeholder="<?=lang::COMMENT_PLACEHOLDER;?>"><?=$_SESSION['temp']['comment']; ?></textarea>
 			</div>

@@ -85,38 +85,32 @@ echo '<section class="content">';
 	echo '<h2>'. lang::H2_NEW_SUPPLIER .'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="name" type="text" value="<?php echo $_SESSION['temp']['name']; ?>" required />
-			</div>
 			
-			<?=brand_multiselect();?>
+				<?=brand_multiselect();?>
 			
-			<?=VAT_select();?>
+				<?=VAT_select();?>
 			
-			<div class="row">
 				<label for="contact"><?=lang::HDR_CONTACT_NAME;?>:</label>
 				<input name="contact" type="text" value="<?php echo $_SESSION['temp']['contact']; ?>" />
-			</div>
-			<div class="row">
+			
 				<label for="position"><?=lang::HDR_CONTACT_POSITION;?>:</label>
 				<input name="position" type="text" value="<?php echo $_SESSION['temp']['position']; ?>" />
 			</div>
 			
-			<div id="morePhones">
+			<div id="morePhones col-2">
 				<?=phones_add();?>
 			</div>
 			
-			<div class="row">
+			<div class="row col-2">
 				<label for="email"><?php echo lang::HDR_EMAIL; ?>:</label>
 				<input name="email" type="email" value="<?=$_SESSION['temp']['email']; ?>" /> 
-			</div>
 			
-			<div class="row">
 				<label for="site"><?=lang::HDR_SITE;?>:</label>
 				<input name="site" type="text" value="<?php echo $_SESSION['temp']['site']; ?>" />
-			</div>
-			<div class="row">
+			
 				<label for="address"><?=lang::HDR_ADDRESS;?>:</label>
 				<input name="address" type="text" value="<?php echo $_SESSION['temp']['address']; ?>" />
 			</div>

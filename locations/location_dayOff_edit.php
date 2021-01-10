@@ -82,11 +82,12 @@ echo '<section class="content">';
 	echo '<h2>'. $title .'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="date"><?=lang::DATE;?>*:</label>
 				<input name="date" type="date" value="<?php echo $data['date']; ?>" />
+			
+				<?php echo weekday_select($data['weekday']); ?>
 			</div>
-			<?php echo weekday_select($data['weekday']); ?>
 			<div class="row">
 				<textarea name="comment" placeholder="<?=lang::COMMENT_PLACEHOLDER;?>"><?=$data['comment']; ?></textarea>
 			</div>

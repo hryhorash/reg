@@ -11,8 +11,7 @@ if ($_GET['tab'] == 'archive'){
 }
 
 
-$locationID = setLocationID();		
-if ($locationID != NULL) {
+if (isset($_SESSION['locationSelected'])) {
 	try 
 	{
 		$sql = "SELECT locations_vacations.id, city, locations.name, locations_vacations.date, weekday, comment
@@ -22,7 +21,7 @@ if ($locationID != NULL) {
 			ORDER BY city, locations.name";
 		$stmt = $pdo->prepare($sql);
 		$stmt -> bindValue(':archive', $archive, PDO::PARAM_INT);
-		$stmt -> bindValue(':id', $locationID, PDO::PARAM_INT);
+		$stmt -> bindValue(':id', $_SESSION['locationSelected'], PDO::PARAM_INT);
 		$stmt ->execute();
 		$count = 1;
 		while($data[$count] = $stmt->fetch(PDO::FETCH_ASSOC))	{
@@ -32,7 +31,6 @@ if ($locationID != NULL) {
 	} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}
 
 }
-		
 $pdo=NULL;
 
 // Кнопки управления доступом

@@ -61,11 +61,12 @@ echo '<section class="content">';
 	echo '<h2>'. lang::H2_WORKTYPE_CAT .'</h2>';?>
 	<form method="post" action="<?php echo $_SERVER['PHP_SELF']. '?tab=active'; ?>">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="category"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="category" class="worktype_cat" type="text" value="<?php echo $_SESSION['temp']['category']; ?>" required />
+				
+				<?=work_netto_services_options($_SESSION['serv_nettoIDs']);?>
 			</div>	
-			<?=work_netto_services_options($_SESSION['serv_nettoIDs']);?>
 		</fieldset>
 	<input type="submit" value="<?php echo lang::BTN_ADD; ?>" />
 	</form>

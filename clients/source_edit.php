@@ -34,18 +34,7 @@ if($_GET['id'] !=''){
 		$stmt -> bindValue(':id', $_GET['id'], PDO::PARAM_INT);
 		$stmt ->execute();
 		$data = $stmt->fetch(PDO::FETCH_ASSOC);
-	} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}
-
-	
-	//проверить права на редактирование воизбежание простого перебора id-шками
-	if (handle_rights('user', $_GET['id']) != 1) 
-	{		
-		$_SESSION['error'] = lang::ERR_NO_RIGHTS;
-		session_write_close();
-		header( 'Location: /clients/source_list.php?tab='.$_GET['tab']);
-		exit;
-	}
-	
+	} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}	
 } else {
 	$_SESSION['error'] = lang::ERR_NO_ID;
 	session_write_close();
@@ -66,10 +55,8 @@ echo '<section class="content">';
 	echo '<h2>'. $data['name'] .'</h2>';?>
 	
 	<form method="post" action="<?php echo $_SERVER['PHP_SELF']. '?tab=active'; ?>">
-		<fieldset>
-			<div class="row">
-				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
-				<input name="name" type="text" value="<?=$data['name']; ?>" required />
+		<fieldset class="noBorders noPadding">
+				<input name="name" type="text" placeholder="<?=lang::HDR_ITEM_NAME;?>" value="<?=$data['name']; ?>" required autofocus />
 			</div>
 			<input name="id" type="hidden" value="<?=$_GET['id'];?>" />
 		</fieldset>

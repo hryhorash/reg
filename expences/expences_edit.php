@@ -27,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$stmt->bindValue(':id', $_POST["id"], PDO::PARAM_INT); 
 		$stmt ->execute();
 		$_SESSION['success'] = lang::SUCCESS_GENERAL;
+		unset($_SESSION['temp']);
 		
 	} catch (PDOException $ex){
 		include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');
@@ -39,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if($_GET['id'] !=''){
 	try {
-		$stmt = $pdo->prepare("SELECT expences.id, date, locationID, subcatID,item,price,comment, catID
+		$stmt = $pdo->prepare("SELECT expences.id, date, locationID, subcatID,item,price,comment, catID, subcategory
 			FROM `expences` 
 			LEFT JOIN expences_subcat ON expences.subcatID = expences_subcat.id
 			LEFT JOIN expences_cat ON expences_subcat.catID = expences_cat.id
@@ -47,6 +48,7 @@ if($_GET['id'] !=''){
 		$stmt -> bindValue(':id', $_GET['id'], PDO::PARAM_INT);
 		$stmt ->execute();
 		$data = $stmt->fetch(PDO::FETCH_ASSOC);
+		$_SESSION['temp']['subcatID'] = $data['subcatID'];
 	} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}
 
 	
@@ -81,29 +83,25 @@ echo '<section class="content">';
 
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="date"><?=lang::DATE;?>*:</label>
 				<input name="date" type="date" value="<?=$data['date'];?>" required />
-			</div>
-			<?php echo location_options(1, null, $data['locationID'], 1); ?>
 			
-			<div class="row">
+				<?php echo location_options(1, null, $data['locationID'], 1); ?>
+			
 				<label for="category"><?=lang::HDR_CATEGORY;?>*:</label>
 				<select name="category" id="category">
 					<?=cat_list(1,$data['catID']); ?>
 				</select>
-			</div>
-			<div class="row">
+			
 				<label for="subcatID"><?=lang::HDR_SUBCATEGORY;?>*:</label>
 				<select name="subcatID" id="subcategory" required>
-					
+					<?='<option value="'.$_SESSION['temp']['subcatID'].'">'.$data['subcategory'].'</option>';?>
 				</select>
-			</div>
-			<div class="row">
+			
 				<label for="item"><?=lang::HDR_ITEM_NAME;?>*:</label>
 				<input name="item" type="text" value="<?=$data['item'];?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="price"><?=lang::HDR_COST;?>*:</label>
 				<input name="price" type="number" step="any" value="<?=$data['price'];?>" required />
 			</div>

@@ -45,12 +45,8 @@ echo '<section class="content">';
 	echo '<h2>'. lang::H2_NEW_SOURCE .'</h2>';?>
 	
 	<form method="post" action="<?php echo $_SERVER['PHP_SELF']. '?tab=active'; ?>">
-		<fieldset>
-			<div class="row">
-				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
-				<input name="name" type="text" value="<?php echo $_SESSION['temp']['name']; ?>" required />
-			</div>
-			
+		<fieldset class="noBorders noPadding">
+				<input name="name" type="text" placeholder="<?=lang::HDR_ITEM_NAME;?>" value="<?php echo $_SESSION['temp']['name']; ?>" required autofocus />
 		</fieldset>
 		<input type="submit" value="<?php echo lang::BTN_ADD; ?>" />
 	</form>

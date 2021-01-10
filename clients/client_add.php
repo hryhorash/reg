@@ -178,41 +178,29 @@ echo '<section class="content">';
 	echo '<h2>'. lang::H2_NEW_CLIENT .'</h2>'; ?>
 	<form method="post" enctype="multipart/form-data">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?php echo lang::NAME; ?>*:</label>
 				<input name="name" type="text" value="<?php echo $_SESSION['temp']['name']; ?>" autofocus required />
-			</div>
-			<div class="row">
 				<label for="surname"><?php echo lang::SURNAME; ?>:</label>
 				<input name="surname" type="text" value="<?php echo $_SESSION['temp']['surname']; ?>" />
-			</div>
-			<div class="row">
 				<label for="prompt"><?php echo lang::HDR_PROMPT; ?>:</label>
 				<input name="prompt" type="text" value="<?php echo $_SESSION['temp']['prompt']; ?>" />
 			</div>
-			<div id="morePhones">
+			<div id="morePhones" class="one-col">
 				<?=phones_add();?>
 			</div>
-			<div class="row">
+			<div class="row col-2">
 				<label for="email"><?php echo lang::HDR_EMAIL; ?>:</label>
 				<input name="email" type="email" value="<?=$_SESSION['temp']['email']; ?>" /> 
-			</div>
-			<div class="row">
 				<label for="DOB"><?php echo lang::HDR_DOB; ?>:</label>
 				<input name="DOB" type="date" value="<?=$_SESSION['temp']['DOB']; ?>" /> 
-			</div>
-			<div class="row">
 				<label><?php echo lang::HDR_GENDER; ?>*:</label>
 				<div class="flex">
-					<div class="inline">
-						<input name="gender" type="checkbox" value="1" <?php if($_SESSION['temp']['gender']==1) echo 'checked'; ?>/> 
-						<label><?=lang::HDR_MALE;?></label>
-						<input name="gender" type="checkbox" value="0"  <?php if(isset($_SESSION['temp']['gender']) && $_SESSION['temp']['gender']==0) echo 'checked'; ?>/> 
-						<label><?=lang::HDR_FEMALE;?></label>
-					</div>
+					<input name="gender" type="checkbox" value="1" <?php if($_SESSION['temp']['gender']==1) echo 'checked'; ?>/> 
+					<label><?=lang::HDR_MALE;?></label>
+					<input name="gender" type="checkbox" value="0"  <?php if(isset($_SESSION['temp']['gender']) && $_SESSION['temp']['gender']==0) echo 'checked'; ?>/> 
+					<label><?=lang::HDR_FEMALE;?></label>
 				</div>
-			</div>
-			<div class="row">
 				<label for="sourceID"><?php echo lang::HDR_CLIENT_SOURCE; ?>*:</label>
 				<?=client_source_select($_SESSION['temp']['sourceID']);?>
 			</div>
@@ -225,11 +213,11 @@ echo '<section class="content">';
 			</div>
 			
 			
-			<div id="locList">
+			<div id="locList" class="row col-2">
 			<?php echo location_options(1,"","",1); ?>
 			</div>
 			
-			<div class="row">
+			<div class="row col-2">
 				<label for="photo"><?php echo lang::HDR_PHOTO; ?>:</label>
 				<input name="photo" type="file" style="line-height:1em; border:none;margin-left: -5px;">
 			</div>

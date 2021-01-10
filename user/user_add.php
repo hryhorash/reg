@@ -100,49 +100,43 @@ echo '<section class="content">';
 	echo '<h2>'. lang::HDR_NEW_USER .'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?php echo lang::NAME; ?>*:</label>
 				<input name="name" type="text" value="<?php echo $_SESSION['temp']['name']; ?>" autofocus required />
-			</div>
-			<div class="row">
+			
 				<label for="surname"><?php echo lang::SURNAME; ?>*:</label>
 				<input name="surname" type="text" value="<?php echo $_SESSION['temp']['surname']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="username"><?php echo lang::USERNAME; ?>*:</label>
 				<input name="username" type="text" value="<?php echo $_SESSION['temp']['username']; ?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="pass"><?php echo lang::PASS; ?>*:</label>
 				<input name="pass" type="password" required /> 
-			</div>
-			<div class="row">
+			
 				<label for="email"><?php echo lang::HDR_EMAIL; ?>*:</label>
 				<input name="email" type="email" value="<?=$_SESSION['temp']['email']; ?>" required /> 
 			</div>
 			<div id="morePhones">
 				<?=phones_add();?>
 			</div>
+
+			<div class="row col-2">
+				<?php echo select_lang(1); ?>
 			
-			<?php echo select_lang(1); ?>
-			<div class="row">
 				<label for="role"><?php echo lang::HDR_ROLE; ?>*:</label>
 				<select name="role" id="role" required>
 					<?php echo role_options($_SESSION['pwr']); ?>
 				</select>
 			</div>
 			
-			<div id="locList">
+			<div id="locList" class="row col-2">
 			<?php echo location_options(); ?>
 			</div>
 			
-			<div class="row" id="basicOnly" <?php// if($_SESSION['temp']['role'] != 'basic') echo 'style="display:none;"';?>>
+			<div class="row col-2" id="basicOnly" <?php// if($_SESSION['temp']['role'] != 'basic') echo 'style="display:none;"';?>>
 				<label for="specialty[]"><?=lang::HDR_WORKTYPE_CATS;?>:</label>
 				<?=work_cat_select('check');?>
 			</div>
-			
-			
-			
 			
 			<div class="row">
 				<textarea name="note" placeholder="<?=lang::COMMENT_PLACEHOLDER;?>"><?=$_SESSION['temp']['note']; ?></textarea>

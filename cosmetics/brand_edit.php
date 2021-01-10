@@ -59,10 +59,10 @@ echo '<section class="content">';
 	echo '<h2>'. $data['name'] .'</h2>';?>
 	
 	<form method="post">
-		<fieldset>
-			<div class="row">
+		<fieldset class="noBorders noPadding">
+			<div class="row col-2">
 				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
-				<input name="name" type="text" value="<?php echo $data['name']; ?>" required />
+				<input name="name" type="text" value="<?php echo $data['name']; ?>" required autofocus />
 			</div>
 			<input name="id" type="hidden" value="<?=$_GET['id'];?>" />
 		</fieldset>

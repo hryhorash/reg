@@ -76,16 +76,14 @@ echo '<section class="content">';
 
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="category"><?=lang::HDR_CATEGORY;?>*:</label>
 				<input name="category" id="catID" class="expences_cat" type="text" value="<?=$data['category']?>" required autofocus />
 				<input type="hidden" name="catID_autocomplete" value="<?=$data['catID']?>"> <!--см. js ниже -->
-			</div>
-			<div class="row">
+			
 				<label for="subcategory"><?=lang::HDR_SUBCATEGORY;?>*:</label>
 				<input name="subcategory" type="text" value="<?=$data['subcategory'];?>" required />
-			</div>
-			<div class="row">
+			
 				<label for="inmenu"><?=lang::HDR_SHOW_IN_MENU;?></label>
 				<div style="flex:13.7;line-height:2.9em;">
 					<input name="inmenu" value="1" type="radio" <?php if($data['inmenu']==1) echo 'checked';?>/><i class="fas fa-check marginLeft" style="color:green;"></i>

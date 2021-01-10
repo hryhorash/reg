@@ -135,49 +135,41 @@ echo '<section class="content">';
 	echo '<h2>'; FIO($data['name'], $data['surname'], $data['prompt']); echo '</h2>';?>
 	<form method="post">
 		<fieldset>
-			<div class="row">
+			<div class="row col-2">
 				<label for="name"><?php echo lang::NAME; ?>*:</label>
 				<input name="name" type="text" value="<?php echo $data['name']; ?>" autofocus required />
-			</div>
-			<div class="row">
 				<label for="surname"><?php echo lang::SURNAME; ?>:</label>
 				<input name="surname" type="text" value="<?php echo $data['surname']; ?>" />
-			</div>
-			<div class="row">
 				<label for="prompt"><?php echo lang::HDR_PROMPT; ?>:</label>
 				<input name="prompt" type="text" value="<?php echo $data['prompt']; ?>" />
 			</div>
-			<div id="morePhones">
+			<div id="morePhones" class="one-col">
 				<?=phones_add($phones);?>
 			</div>
-			<div class="row">
+			<div class="row col-2">
 				<label for="email"><?php echo lang::HDR_EMAIL; ?>:</label>
 				<input name="email" type="email" value="<?=$data['email']; ?>" /> 
-			</div>
-			<div class="row">
+				
 				<label for="DOB"><?php echo lang::HDR_DOB; ?>:</label>
 				<input name="DOB" type="date" value="<?=$data['DOB']; ?>" /> 
-			</div>
-			
-			
-			
-			<div class="row">
+				
 				<label><?php echo lang::HDR_GENDER; ?>*:</label>
-				<div class="flex">
-					<div class="inline">
-						<input name="gender" type="checkbox" value="1" <?php if($data['gender']==1) echo 'checked'; ?>/> 
+				<div class="row col-2" style="height:2em;">
+					<div>
+						<input name="gender" type="checkbox" style="margin:0;" value="1" <?php if($data['gender']==1) echo 'checked'; ?>/> 
 						<label><?=lang::HDR_MALE;?></label>
-						<input name="gender" type="checkbox" value="0"  <?php if($data['gender']==0) echo 'checked'; ?>/> 
+					</div>
+					<div>
+						<input name="gender" type="checkbox" style="margin:0;" value="0"  <?php if($data['gender']==0) echo 'checked'; ?>/> 
 						<label><?=lang::HDR_FEMALE;?></label>
 					</div>
 				</div>
-			</div>
-			<div class="row">
+			
 				<label for="sourceID"><?php echo lang::HDR_CLIENT_SOURCE; ?>*:</label>
 				<?=client_source_select($data['sourceID']);?>
 			</div>
 			
-			<div class="row" id="refClient" 
+			<div class="row col-2" id="refClient" 
 			<?php if($data['refClientID'] ==0) echo 'style="display:none;"';?> >
 				<label for="refClient"><?php echo lang::HDR_RECOMMENDATION; ?>:</label>
 				<input name="refClient" class="FIO" type="text" value="<?php FIO($data['refName'],$data['refSurame'],$data['refPrompt']); ?>" />
@@ -185,8 +177,8 @@ echo '<section class="content">';
 			</div>
 			
 			
-			<div id="locList">
-			<?php echo location_options(1,"","",1); ?>
+			<div id="locList" class="row col-2">
+				<?php echo location_options(1,"","",1); ?>
 			</div>
 			
 			<div class="row">

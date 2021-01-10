@@ -153,26 +153,22 @@ $title=lang::TITLE_CLIENT_VISIT;
 	
 	<form method="post" id="form" name="client_visit" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>">
 		<fieldset>
-			<div class="row nested">
-				<label for="name" style="flex:7.8;"><?=lang::HDR_YOUR_NAME;?>*:</label>
+			<div class="row col-3">
+				<label for="name" ><?=lang::HDR_YOUR_NAME;?>*:</label>
 				<input name="name" type="text" placeholder="<?=lang::NAME;?>" value="<?=$_SESSION['temp']['name'];?>" required />
 				<input name="surname" type="text" placeholder="<?=lang::SURNAME;?>" value="<?=$_SESSION['temp']['surname'];?>" />
-			</div>
-			<div class="row">
-				<label for="phone"><?=lang::HDR_PHONE;?>*:</label>
-				<input name="phone" type="number" placeholder="<?=lang::PHONE_PLACEHOLDER_PATTERN;?>" pattern="[0-9]{12}" value="<?=$_SESSION['temp']['phone'];?>" required />
-			</div>
 			
-			<div class="row">
+				<label for="phone"><?=lang::HDR_PHONE;?>*:</label>
+				<input name="phone" style="grid-column:2/4;" type="number" placeholder="<?=lang::PHONE_PLACEHOLDER_PATTERN;?>" pattern="[0-9]{12}" value="<?=$_SESSION['temp']['phone'];?>" required />
+			
 				<label for="date"><?=lang::DATE;?>*:</label>
-				<input name="date" type="date" value="<?=$_SESSION['temp']['date'];?>" required />
-			</div>
-			<div class="row nested">
-				<label for="startTime" style="flex: 8.3;"><?=lang::HDR_TIME;?>*:</label>
+				<input name="date" style="grid-column:2/4;" type="date" value="<?=$_SESSION['temp']['date'];?>" required />
+			
+				<label for="startTime"><?=lang::HDR_TIME;?>*:</label>
 				<select name="startTime" required />
 					<?=time_options($_SESSION['temp']['startTime'], 1);?>
 				</select>
-				<select name="endTime" style="margin-left: 10px;" required />
+				<select name="endTime" required />
 					<?=time_options($_SESSION['temp']['endTime'], 1, $start[0]);?>
 				</select>
 			</div>

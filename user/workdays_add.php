@@ -59,17 +59,27 @@ echo '<section class="sidebar">';
 	echo tabs($tabs);
 echo '</section>';
 echo '<section class="content">';
+	echo '<style>	
+		label {grid-row: 1 / 2;}
+		input[name="date"] {grid-column: 1/2;}
+		select[name="weekday"] {grid-column: 2/3;}
+		select[name="even"] {grid-column: 3/4;}
+	</style>';
+
 	include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');
 	echo '<h2>'. $title .'</h2>';?>
 	<form method="post">
 		<fieldset>
-			<?php user_select(setLocationID(), $_SESSION['temp']['userID']);?>
-			<div class="row">
+			<div class="row col-2">
+				<?php user_select(setLocationID(), $_SESSION['temp']['userID']);?>
+			</div>
+			<div class="row col-3">
 				<label for="date"><?=lang::DATE;?>:</label>
 				<input name="date" type="date" value="<?php echo $_SESSION['temp']['date']; ?>" />
-			</div>
-			<?php echo weekday_select($_SESSION['temp']['weekday']); ?>
-			<?php echo even_select($_SESSION['temp']['even']); ?>
+			
+				<?php echo weekday_select($_SESSION['temp']['weekday']); ?>
+				<?php echo even_select($_SESSION['temp']['even']); ?>
+			</div>	
 			<div class="row">
 				<textarea name="comment" placeholder="<?=lang::COMMENT_PLACEHOLDER;?>"><?=$_SESSION['temp']['comment']; ?></textarea>
 			</div>
@@ -78,7 +88,7 @@ echo '<section class="content">';
 		<input type="submit" value="<?php echo lang::BTN_ADD; ?>" />
 	</form>
 </section>
-<script src="/user/workday_select_controller.js"></script>
+
 <?php 
 unset($_SESSION['temp']);
 include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');	

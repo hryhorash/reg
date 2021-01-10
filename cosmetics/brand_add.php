@@ -54,11 +54,8 @@ echo '<section class="content">';
 	include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');
 	echo '<h2>'. lang::H2_NEW_BRAND .'</h2>';?>
 	<form method="post">
-		<fieldset>
-			<div class="row">
-				<label for="name"><?=lang::HDR_ITEM_NAME;?>*:</label>
-				<input name="name" type="text" value="<?php echo $_SESSION['temp']['name']; ?>" required />
-			</div>
+		<fieldset class="noBorders noPadding">
+			<input name="name" type="text" placeholder="<?=lang::HDR_ITEM_NAME;?>" value="<?php echo $_SESSION['temp']['name']; ?>" required autofocus />
 		</fieldset>
 		<input name="backTo" type="hidden" value="<?=$_GET['backTo'];?>">
 		<input type="submit" value="<?php echo lang::BTN_ADD; ?>" />

@@ -12,7 +12,7 @@
 	include (dirname(__FILE__).'/connect.php');
 	include (dirname(__FILE__).'/functions.php');
 	
-	if ($_GET['lang'] != '') $_SESSION['lang'] = $_GET['lang'];
+	if ($_REQUEST['lang'] != '') $_SESSION['lang'] = $_REQUEST['lang'];
 	include_once($_SERVER['DOCUMENT_ROOT'].'/config/lang_select.php');
 	
 	

@@ -10,9 +10,7 @@ if ($_GET['tab'] == 'archive'){
 	$pageID = 'rate_active';
 }
 
-
-$locationID = setLocationID();		
-if ($locationID != NULL) {	
+if (isset($_SESSION['locationSelected'])) {	
 	try {
 		$stmt = $pdo->prepare("SELECT stakes.id , category, subcategory, date, unitPrice, monthlyPrice, locations.name as location, stakes.locationID 
 			FROM stakes
@@ -23,16 +21,14 @@ if ($locationID != NULL) {
 				AND locationID = :locID
 			ORDER BY subcategory ASC, stakes.date DESC");
 		$stmt->bindValue(':archive', $archive, PDO::PARAM_INT);
-		$stmt->bindValue(':locID', $locationID, PDO::PARAM_INT);
+		$stmt->bindValue(':locID', $_SESSION['locationSelected'], PDO::PARAM_INT);
 		$stmt->execute();
 		$count = 1;
-		while($data[$count] = $stmt->fetch(PDO::FETCH_ASSOC)) $count++;
+		while($data[$count] = $stmt->fetch(PDO::FETCH_ASSOC))	$count++;
 	} catch (PDOException $ex){
 		include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');
 	}
 }
-
-
 $pdo = NULL;
 
 // Кнопки управления доступом
@@ -67,7 +63,7 @@ echo '</section>';
 
 echo '<section class="content">';
 	include_once($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');
-	echo header_loc(lang::MENU_STAKES,$_GET['loc']);
+	echo header_loc(lang::MENU_STAKES);
 
 	if ($count > 1) { ?>
 		

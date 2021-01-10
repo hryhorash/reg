@@ -149,7 +149,7 @@ class lang {
 	const HDR_WAGE = 'Зарплата'; 
 	const HDR_SERVICE_NETTO = 'Себестоимость услуг'; 
 	const HDR_ADD_SERVICE_NETTO = 'Добавить себестоимость услуги'; 
-	const HDR_SERVICES_NETTO = 'Затраты нетто на:'; 
+	const HDR_SERVICES_NETTO = 'Затраты нетто на'; 
 	const MENU_WAREHOUSE = 'Склад'; 
 	const HDR_SERVICES = 'Услуги'; 
 	const HDR_FORMULA = 'Формула'; 
@@ -359,6 +359,7 @@ class lang {
 	const HDR_NEW_SALE = 'Новая продажа';
 	const H2_FINANCE_REPORT = 'Финансовый результат';
 	const H2_SALES_REPORT = 'Отчет по продажам';
+	const HDR_REVENUE = 'Доход';
 	const HDR_REVENUE_TOTAL = 'Доходы, всего';
 		const HDR_REVENUE_SERVICES = 'работы';
 		const HDR_REVENUE_SALES = 'продажи';
@@ -398,7 +399,13 @@ class lang {
 	const BTN_UPLOAD_PHOTO = 'Загрузить фото';
 	const BTN_UPDATE_PHOTO = 'Обновить фото';
 	const HDR_CLIENT_PROFILE = 'Посмотреть профиль';
-	
+
+	// Отчеты	
+	const H2_VISITS_REVENUE_PER_DAY = 'Визиты по дням';
+	const H2_FINANCE_YEARLY = 'Финансовый результат (год)';
+	const HDR_ANALYSIS = 'Анализ';
+	const HDR_PROFIT_PER_MONTH_AVG = 'Прибыль в месяц, средняя';
+	const HDR_EXPENCES_TO_REVENUE = 'Доля расходов в обороте';
 }
 
  ?>

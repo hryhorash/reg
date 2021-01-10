@@ -349,20 +349,23 @@ echo '<section class="content">';
 	if(isset($subtitle)) echo '<p class="subtitle">'.$subtitle.'</p>';?>
 
 	<template id="purchase">
-		<div class="row nested">
-			<input name="cosm[]" type="text" placeholder="<?=lang::HDR_ITEM_NAME;?>" />
-			<a class="inside-input" href="/cosmetics/cosmetics_add.php?backTo=close" target="_blank" title="<?=lang::H2_COSMETICS;?>" tabindex="-1"><i class="fas fa-plus inline-fa"></i></a>
+		<div class="row col-6__1st_wide">
+			<div style="position: relative;">
+				<input name="cosm[]" type="text" style="width: -webkit-fill-available;" placeholder="<?=lang::HDR_ITEM_NAME;?>" />
+				<a class="inside-input" href="/cosmetics/cosmetics_add.php?backTo=close" target="_blank" title="<?=lang::H2_COSMETICS;?>" tabindex="-1">
+					<i class="fas fa-plus"></i>
+				</a>
+			</div>
 			<input name="qtyIn[]" class="short" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_QTY;?>" value="1" />
 			<input name="price[]" class="short" type="number" step="0.01" min="0" placeholder="<?=lang::HDR_PRICE;?>" />
 			<input name="discount[]" class="short" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_DISCOUNT;?>" />
 			<input name="priceIn[]" class="short bold" type="number" step="0.01" min="0" placeholder="<?=lang::HDR_TOTAL;?>"  value="0" />
 			<input name="cosmID[]" type="hidden" value="" />
+			<div style="width: 3ch;"></div>
 			
-		</div>
-		<div class="row nested">
 			<label name="expire[]" style="color: grey;"><?=lang::HDR_EXPIRE;?>:</label>
-			<input name="expire[]" type="date" style="color: grey;"/>
-			<input name="RRP[]" class="short" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_RRP;?>" />
+			<input name="expire[]" type="date" style="color: grey; grid-column: 2/5;"/>
+			<input name="RRP[]" class="short" style="grid-column: 5/6;" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_RRP;?>" />
 		</div>
 	</template>
 
@@ -370,43 +373,42 @@ echo '<section class="content">';
 		<fieldset >
 			<?php 
 			if (!isset($_GET['new'])) {
-				location_options($select = 1, $data[1]['locationID'], null, 1);
-				supplier_select($supplierData['id']);
-				invoice_state_select($data[1]['state']);?>
-			<div id="invoiceDetails">
-				<div class="row">
+				echo '<div class="row col-2">';
+					location_options($select = 1, $data[1]['locationID'], null, 1);
+					supplier_select($supplierData['id']);
+					invoice_state_select($data[1]['state']);
+				echo '</div>';
+				?>
+				
+				<div id="invoiceDetails" class="row col-2">
 					<label for="invoice"><?=lang::HDR_INVOICE;?>*:</label>
 					<input name="invoice" type="text" value="<?=$data[1]['invoice'];?>" required />
-				</div>
-				<div class="row">
+				
 					<label for="date"><?=lang::HDR_INVOICE_DATE;?>:</label>
 					<input name="date" type="date" value="<?=$data[1]['date'];?>" />
-				</div>
-				<div class="row">
+				
 					<label for="datePaid"><?=lang::HDR_DATE_PAID;?>:</label>
 					<input name="datePaid" type="date" value="<?=$data[1]['datePaid'];?>" />
-				</div>
-				<div class="row">
+				
 					<label for="dateReceived"><?=lang::HDR_DATE_RECEIVED;?>:</label>
 					<input name="dateReceived" type="date" value="<?=$data[1]['dateReceived'];?>" />
 				</div>
-			</div>
 				
 			<?php } ?>
 			<div id="cosmLines">
-			<div class="row nested">
+			<div class="row col-6__1st_wide">
 				<input class="cosmSupplier00 input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
 				<input class="input-hdr bold short" value="<?=lang::PLACEHOLDER_QTY;?>" disabled />
 				<input class="input-hdr bold short" value="<?=lang::HDR_PRICE;?>" disabled />
 				<input class="input-hdr bold short" value="<?=lang::HDR_DISCOUNT;?>" disabled />
 				<input class="input-hdr bold short" value="<?=lang::HDR_TOTAL;?>" disabled />
-				
+				<div style="width:3ch;"></div>
 			</div>		
 			<?php 
 			$count=1;
 			if(!isset($_GET['new'])){
 				while($data[$count] != null){
-					echo '<div class="row nested">
+					echo '<div class="row col-6__1st_wide">
 						<input name="cosm[]" class="cosmSupplier'.$count.'" style="margin: 5px 0;" type="text" placeholder="'.lang::HDR_ITEM_NAME.'" value="'.$data[$count]['cosm_name'].'" disabled />
 						<input name="qtyIn[]" class="short" type="number" step="0.01" placeholder="'.lang::PLACEHOLDER_QTY.'" value="'.$data[$count]['qty'].'" />
 						<input name="price[]" class="short" type="number" step="0.01" placeholder="'.lang::HDR_PRICE.'" value="'.round($price[$count],2).'"  title="'.$tooltip; echo curr(); echo'" />
@@ -414,12 +416,12 @@ echo '<section class="content">';
 						<input name="priceIn[]" class="short bold" type="number" step="0.01" placeholder="'.lang::HDR_TOTAL.'" value="'.round($priceIn[$count],2).'" />
 						<input name="cosmID[]" type="hidden" value="'.$data[$count]['cosmID'].'" required />
 						<input name="isChanged[]" type="hidden" value="0">';
-						if ($data[$count]['soldTo'] =='') echo '<i class="fas fa-times inline-fa" id="'.$count.'" onclick="deleteRow('.$count.');" title="'.lang::HANDLING_DELETE.'"></i>';
-					echo '</div>
-					<div class="row nested">
+						if ($data[$count]['soldTo'] =='') echo '<i class="fas fa-times" style="transform: translateY(200%);" id="'.$count.'" onclick="deleteRow('.$count.');" title="'.lang::HANDLING_DELETE.'"></i>';
+						else echo '<b></b>';
+					echo '
 						<label name="expire[]" style="color: grey;">'.lang::HDR_EXPIRE.':</label>
-						<input name="expire[]" type="date"  style="color: grey;" value="'.$data[$count]['expire'].'" />
-						<input name="RRP[]" type="number" step="0.01" min="0" class="short" value="'.$data[$count]['RRP'].'"/>
+						<input name="expire[]" type="date"  style="color: grey; grid-column: 2/5;" value="'.$data[$count]['expire'].'" />
+						<input name="RRP[]" type="number" step="0.01" min="0" class="short" style="grid-column: 5/6;" value="'.$data[$count]['RRP'].'"/>
 						<input name="expire_old[]" type="hidden" value="'.$data[$count]['expire'].'" />
 						<input name="cosmID_old[]" type="hidden" value="'.$data[$count]['cosmID'].'" />
 						<input name="qtyIn_old[]" type="hidden" value="'.$data[$count]['qty'].'" />
@@ -435,19 +437,23 @@ echo '<section class="content">';
 			?>
 			
 			
-				<div class="row nested">
-					<input name="cosm[]" class="cosmSupplier" style="margin: 5px 10px 5px 0;" type="text" placeholder="<?=lang::HDR_ITEM_NAME;?>" autofocus />
-					<a class="inside-input" href="/cosmetics/cosmetics_add.php?backTo=close" target="_blank" title="<?=lang::H2_COSMETICS;?>" tabindex="-1"><i class="fas fa-plus inline-fa"></i></a>
+				<div class="row col-6__1st_wide">
+					<div style="position: relative;">
+						<input name="cosm[]" class="cosmSupplier" type="text" style="width: -webkit-fill-available;" placeholder="<?=lang::HDR_ITEM_NAME;?>" />
+						<a class="inside-input" href="/cosmetics/cosmetics_add.php?backTo=close" target="_blank" title="<?=lang::H2_COSMETICS;?>" tabindex="-1">
+							<i class="fas fa-plus"></i>
+						</a>
+					</div>
 					<input name="qtyIn[]" class="short" type="number" step="0.01" placeholder="<?=lang::PLACEHOLDER_QTY;?>" value="1" />
 					<input name="price[]" class="short" type="number" step="0.01" placeholder="<?=lang::HDR_PRICE;?>" title="" />
 					<input name="discount[]" class="short" type="number" step="0.01" placeholder="<?=lang::PLACEHOLDER_DISCOUNT;?>" />
 					<input name="priceIn[]" class="short bold" type="number" step="0.01" placeholder="<?=lang::HDR_TOTAL;?>" />
 					<input name="cosmID[]" type="hidden" value="" required />
-				</div>
-				<div class="row nested">
+					<div style="width:3ch;"></div>
+				
 					<label name="expire[]" style="color: grey;"><?=lang::HDR_EXPIRE;?>:</label>
-					<input name="expire[]" type="date" style="color: grey;" />
-					<input name="RRP[]" class="short" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_RRP;?>" />
+					<input name="expire[]" type="date" style="color: grey; grid-column: 2/5;" />
+					<input name="RRP[]" class="short" style="grid-column: 5/6;" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_RRP;?>" />
 				</div>
 			<input name="new" type="hidden" value="<?=$_GET['new'];?>" />
 			<?php }?>
@@ -543,7 +549,7 @@ $(document).ready(function(){
 		$(this).siblings("input[name='isChanged[]']").val(1);
 	});
 	$("input[name='expire[]']").change(function(){
-		$(this).parent().prev().children("input[name='isChanged[]']").val(1);
+		$(this).siblings("input[name='isChanged[]']").val(1);
 	});
 });
 
@@ -556,8 +562,8 @@ $('.cosmSupplier').autocomplete({
 	onSelect: function (suggestion) {
 		let cosmID = suggestion.data.split('--')[0];
 		let RRP = suggestion.data.split('--')[1];
-		$(this).siblings("input[name='cosmID[]']").val(cosmID);
-		$(this).parent().next().children("input[name='RRP[]']").prop('placeholder', RRP);
+		$(this).parent().siblings("input[name='cosmID[]']").val(cosmID);
+		$(this).parent().siblings("input[name='RRP[]']").prop('placeholder', RRP);
 	}
 });
 
@@ -595,8 +601,8 @@ function lineAdd() {
 		onSelect: function (suggestion) {
 			let cosmID = suggestion.data.split('--')[0];
 			let RRP = suggestion.data.split('--')[1];
-			$(this).siblings("input[name='cosmID[]']").val(cosmID);
-			$(this).parent().next().children("input[name='RRP[]']").prop('placeholder', RRP);
+			$(this).parent().siblings("input[name='cosmID[]']").val(cosmID);
+			$(this).parent().siblings("input[name='RRP[]']").prop('placeholder', RRP);
 		}
 	});
 }
@@ -608,7 +614,6 @@ function deleteRow(rowID) {
 	$(this).parent().siblings("input[name='qtyIn[]']").val(0);
 	$("#"+rowID).siblings("input[name='qtyIn[]']").val(0);
 	$("#"+rowID).parent().hide();
-	$("#"+rowID).parent().next().hide();
 }
 
 

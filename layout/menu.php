@@ -41,7 +41,7 @@
 		</div-->
 		
 		
-			<li onclick="menuExpand(4);"><i class="fas fa-chart-line"></i><?=lang::MENU_ANALYTICS;?></li>
+			<li class="flex" onclick="menuExpand(4);"><i class="fas fa-chart-line"></i><?=lang::MENU_ANALYTICS;?></li>
 			<div class="drop-down" id='4'>
 				<?php if ($_SESSION["pwr"] > 89) { ?>
 			
@@ -52,7 +52,7 @@
 			echo '</div>';
 		if ($_SESSION["role"] != 'basic') { ?>
 			
-			<li onclick="menuExpand(5);"><i class="fas fa-cogs"></i><?=lang::MENU_SETTINGS;?></li>
+			<li class="flex" onclick="menuExpand(5);"><i class="fas fa-cogs"></i><?=lang::MENU_SETTINGS;?></li>
 			<div class="drop-down" id='5'>
 				
 				<?php if ($_SESSION["pwr"] > 89) { 

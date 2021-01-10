@@ -99,7 +99,7 @@ echo '<section class="content">';
 				<td class='mobile-hide'>" . $data[$count]['category'] . "</td>
 				<td class='mobile-hide'>" . $data[$count]['subcategory'] . "</td>
 				<td>" . $data[$count]['item'] . "</td>
-				<td class='center'>" . $data[$count]['price']; curr(); echo "</td>
+				<td class='center'>" . $data[$count]['price'] . curr() .  "</td>
 				<td class='mobile-hide'>" . $data[$count]['comment'] . "</td>
 				<td class='center'>"; ?>
 					<a title="<?php echo $handle['change']['title']; ?>" href="<?php echo $handle['change']['link_start'] . $data[$count]['id']; ?>"><?php echo $handle['change']['button']; ?></a>
@@ -109,9 +109,9 @@ echo '<section class="content">';
 			<?php $count++;
 		}
 			echo '<tr>
-				<th colspan="2">'.lang::HDR_TOTAL.':</td>
-				<th class="mobile-hide" colspan="3"></td>
-				<th colspan="2"><strong>' . $total; curr(); echo '</strong></td>
+				<th colspan="2">'.lang::HDR_TOTAL.':</th>
+				<th class="mobile-hide" colspan="2"></th>
+				<th colspan="3"><strong>' . $total . curr() . '</strong></th>
 			</tr>
 		</table>';
 		echo $button_add;
