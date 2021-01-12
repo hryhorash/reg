@@ -1,4 +1,22 @@
-dragula([document.getElementById("spentLines")]); //draggable container
+dragula([document.getElementById("spentLines")], {
+	revertOnSpill: true,
+	moves: function (el, container, handle) {
+		return handle.classList.contains("handle");
+	},
+})
+	.on("drag", function (el) {
+		el.className = el.className.replace("ex-moved", "");
+	})
+	.on("drop", function (el) {
+		el.className += " ex-moved";
+	})
+	.on("over", function (el, container) {
+		container.className += " ex-over";
+	})
+	.on("out", function (el, container) {
+		container.className = container.className.replace("ex-over", "");
+	});
+
 const edit = $('input[name="v_id"]').val();
 if (edit > 0) {
 	totalPrice();
@@ -533,24 +551,39 @@ $(document).on("change", function () {
 	});
 	//пересчет итогов по продажам
 	$("input[name='qty[]'], input[name='priceSold[]").on("keyup blur", function () {
-		var q = $(this).parent().children("input[name='qty[]']").val();
-		var p = $(this).parent().children("input[name='priceSold[]']").val();
-		var limit = $(this)
+		let q = $(this).parent().children("input[name='qty[]']").val();
+		let p = $(this).parent().children("input[name='priceSold[]']").val();
+		let netto = $(this).siblings("input[name='sell_netto[]']").val().split(",");
+		let limit = $(this)
 			.parent()
 			.children("input[name='qty[]']")
 			.prop("max")
 			.valueOf();
-		var old = $(this).siblings("input[name='qtyOld[]']").val();
+		let old = $(this).siblings("input[name='qtyOld[]']").val();
 		if (q > limit && old > 0) {
 			$(this).parent().children("input[name='qty[]']").val(limit);
-			alert("<?=lang::ALERT_EXCEED_LIMIT;?>");
+			alert(alert_sales_limit);
+		} else if (q > limit) {
+			$(this).parent().children("input[name='qty[]']").val(limit);
+			alert(alert_sales_max);
+			q = limit;
 		}
 
 		if (q > 0 && p > 0) {
 			$(this)
-				.parent()
-				.children("input[name='sold_price_total[]']")
+				.siblings("input[name='sold_price_total[]']")
 				.val((p * q).toFixed(2));
+
+			let i = 0;
+			let totalNetto_this = 0;
+			while (i < q) {
+				totalNetto_this += p - netto[i];
+				i++;
+			}
+
+			$(this)
+				.siblings(".tooltip")
+				.attr("data-tooltip", profit_lable + ": " + totalNetto_this.toFixed(2));
 		}
 		salesTotals();
 	});
@@ -785,3 +818,12 @@ function delete_visit() {
 }
 
 $(".del_visit").on("click", delete_visit);
+
+$("#netto_header").on("click", function () {
+	$("#netto").toggle();
+	$("#netto_totals").toggle();
+});
+
+$("#sales_header").on("click", function () {
+	$("#sales_hide").toggle();
+});

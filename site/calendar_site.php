@@ -78,7 +78,7 @@ $nav = calendar_navigation_buttons($weekdays[1], 'noArchive');
 	
 $title=lang::MENU_CALENDAR; 
 //---------------------VIEW--------------------------------------?>
-<!DOCTYPE html><html lang="ru-UA">
+<!DOCTYPE html><html lang="<?=$_SESSION['locale'];?>">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">

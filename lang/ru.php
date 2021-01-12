@@ -192,6 +192,7 @@ class lang {
 	const HANDLING_RESTORE = 'Восстановить '; 			//пробел в конце нужен
 	const ALERT_WRONG_DATE_STATE = 'Этот статус недоступен для дат в будущем';
 	const ALERT_EXCEED_LIMIT = 'Для увеличения количества нажмите "' . lang::BTN_ADD_SALE . '"';
+	const ALERT_EXCEED_MAX = 'Такого количества нет в наличии. Будет установлено максимально доступное';
 	const HDR_CALENDAR_TAKEN = 'занято';
 	
 	

@@ -700,7 +700,7 @@ $nettoTemplate='
 						
 
 $spentTemplate = '<div class="row col-5__1wide">
-		<i class="fas fa-arrows-alt-v"></i>
+		<i class="fas fa-arrows-alt-v noPadding handle"></i>
 		<input name="cosmNames[]" 	  type="text"  class="mobile-wide" placeholder="'.lang::HDR_ITEM_NAME.'"										 />
 		<input name="spentV[]" 	  type="number" min="0" step="1"	class="short" 	 />
 		<input name="spentC[]" type="number" step="0.01"	class="input-hdr short" tabindex="-1" readonly';
@@ -717,7 +717,8 @@ $soldtemplate = '<div class="row col-5__1st_wide">
 		<input name="soldName[]" type="text" class="mobile-wide" placeholder="'.lang::HDR_ITEM_NAME.'" />
 		<input name="qty[]" type="number" class="short" step="1"   />
 		<input name="priceSold[]" type="number" class="short" step="0.01" />
-		<input name="sold_price_total[]" type="number" class="short" step="0.01" value="0" tabindex="-1" readonly/>
+		<input name="sold_price_total[]" type="number" class="short" step="0.01" value="0" tabindex="-1" readonly />
+		<div class="tooltip" style="position:absolute;right: 20px; width: 80px;">&nbsp;</div>
 		<input name="sold_cosmID[]" type="hidden" />
 		<input name="sell_netto[]" type="hidden" />
 		<input name="sell_available[]" type="hidden" />
@@ -891,10 +892,10 @@ echo '<section class="content">';
 				<!----------------- СЕБЕСТОИМОСТЬ ---------------->
 				
 				<section id="nettoData">
-					<p class="title"><?=lang::HDR_NETTO_SEVICES;?>*</p>
+					<p class="title" id="netto_header"><?=lang::HDR_NETTO_SEVICES;?><span class="tooltip" data-tooltip="<?=lang::EXPL_NETTO_PRICE;?>"><i class="fas fa-info-circle"></i></span> <i class="fas fa-chevron-down"></i></p>
 					
 					
-					<div id="netto" class="row col-2__1wide">
+					<div id="netto" class="row col-2__1wide" style="display:none;">
 						<input class="input-hdr bold" 		 value="<?=lang::HDR_ITEM_NAME;?>" disabled />
 						<input class="input-hdr bold short " value="<?=curr();?>" 		disabled />
 					
@@ -917,27 +918,26 @@ echo '<section class="content">';
 						?>
 						
 					</div>
-					<div class="row col-2__1wide">
+					<div class="row col-2__1wide" id="netto_totals" style="display:none;">
 						<input class="input-hdr bold alignRight mobile-wide" 	value="<?=lang::HDR_TOTAL;?>" disabled />
 						<input class="bold short" name="netto_total" type="number" value="<?=correctNumber($_SESSION['temp']['total_netto'],2);?>" 	 />
 					</div> 
-					<p class="small italic">* <?=lang::EXPL_NETTO_PRICE;?></p>
 				</section>
 				
 				<section id="spentData">
 					<p class="title"><?=lang::HDR_SPENT_LIST;?></p>
-					<div id="spentLines">
-						<div class="row col-5__1wide">
+					<div class="row col-5__1wide">
 							<div style="width:2ch"></div>
 							<input type="text" class="mobile-wide input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
 							<input type="text" class="input-hdr bold short" value="<?=lang::HDR_SPENT_VOLUME;?>" disabled />
 							<input type="text" class="input-hdr bold short" value="<?=curr();?>" disabled <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> />
 							<div style="width:3ch"></div>
 						</div>
+					<div id="spentLines">
 						<?php 
 						while($_SESSION['temp']['spent'][$count] != null) {
 							echo '<div class="row col-5__1wide">
-								<i class="fas fa-arrows-alt-v"></i>
+								<i class="fas fa-arrows-alt-v noPadding handle"></i>
 								<input name="cosmNames[]" type="text" class="mobile-wide input-hdr" value="'.htmlspecialchars($_SESSION['temp']['spent'][$count]['cosmNames']).'" readonly/>
 								<input name="spentV[]" type="number" class="short" step="1"    value="'.$_SESSION['temp']['spent'][$count]['spentV'].'" />
 								<input name="spentC[]" type="number" class="short" step="0.01" value="'.$_SESSION['temp']['spent'][$count]['spentC'].'" readonly '; 
@@ -968,42 +968,46 @@ echo '<section class="content">';
 				</section>
 				
 				<section id="salesData">
-					<p class="title"><?=lang::HDR_SALES_LIST;?></p>
-					<div class="row col-5__1st_wide">
-						<input type="text" class="mobile-wide input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
-						<input type="text" class="input-hdr bold short" value="<?=lang::PLACEHOLDER_QTY;?>" disabled />
-						<input type="text" class="input-hdr bold short" value="<?=lang::HDR_PRICE;?>" disabled />
-						<input type="text" class="input-hdr bold short mobile-hide" value="<?=lang::HDR_TOTAL;?>" disabled />
-						<div style="width:3ch;"></div>
-					</div>	
-					<div id="salesLines">
-					
-						<?php $s=0;
-						while($_SESSION['temp']['sales'][$s] != null) {
-							echo '<div class="row col-5__1st_wide">
-								<input name="soldName[]" type="text" class="mobile-wide input-hdr" value="'.htmlspecialchars($_SESSION['temp']['sales'][$s]['soldName']).'" readonly/>
-								<input name="qty[]" type="number" class="short" step="1"    value="'.$_SESSION['temp']['sales'][$s]['qty'].'" max="'.$_SESSION['temp']['sales'][$s]['qty'].'" />
-								<input name="priceSold[]" type="number" class="short" step="0.01" value="'.$_SESSION['temp']['sales'][$s]['priceSold'] / $_SESSION['temp']['sales'][$s]['qty'].'" />
-								<input name="sold_price_total[]" type="number" class="short" step="0.01" value="'.$_SESSION['temp']['sales'][$s]['priceSold'].'" readonly/>
-								<input name="sold_cosmID[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['sold_cosmID'].'" />
-								<input name="soldRowIDs[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['soldRowIDs'].'" />
-								<input name="priceSoldOld[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['priceSoldOld'].'" />
-								<input name="qtyOld[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['qtyOld'].'" />
-								<input name="sell_netto[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['priceIn'].'"/>
-								<input name="sell_available[]" type="hidden" />
-								<i class="fas fa-times  sales" title="'.lang::HANDLING_DELETE.'"></i>
-							</div>';
-							$s++;
-						}?>
-					</div>	
-					<input type="button" value="<?=lang::BTN_ADD_SALE;?>" onclick="saleAdd();" />
-					<div class="row col-5__1st_wide">
-						<input type="text" class="input-hdr bold" value="<?=lang::HDR_TOTAL;?>" disabled />
-						<input name="totalQty" type="number" class="input-hdr bold short" value="<?=$totalQty;?>" readonly />
-						<input class="input-hdr bold short mobile-hide" disabled />
-						<input name="totalSales" type="number" class="input-hdr bold short" value="<?=$totalSales;?>" readonly />
-						<div style="width:3ch;"></div>
-					</div>	
+					<p class="title" id="sales_header">
+						<?=lang::HDR_SALES_LIST;?><i class="fas fa-chevron-down"></i>
+					</p>
+					<div id="sales_hide" <?php if($_SESSION['temp']['sales'][$s] == null) echo 'style="display:none;"';?>>
+						<div class="row col-5__1st_wide">
+							<input type="text" class="mobile-wide input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>" disabled />
+							<input type="text" class="input-hdr bold short" value="<?=lang::PLACEHOLDER_QTY;?>" disabled />
+							<input type="text" class="input-hdr bold short" value="<?=lang::HDR_PRICE;?>" disabled />
+							<input type="text" class="input-hdr bold short mobile-hide" value="<?=lang::HDR_TOTAL;?>" disabled />
+							<div style="width:3ch;"></div>
+						</div>	
+						<div id="salesLines">
+						
+							<?php $s=0;
+							while($_SESSION['temp']['sales'][$s] != null) {
+								echo '<div class="row col-5__1st_wide">
+									<input name="soldName[]" type="text" class="mobile-wide input-hdr" value="'.htmlspecialchars($_SESSION['temp']['sales'][$s]['soldName']).'" readonly/>
+									<input name="qty[]" type="number" class="short" step="1"    value="'.$_SESSION['temp']['sales'][$s]['qty'].'" max="'.$_SESSION['temp']['sales'][$s]['qty'].'" />
+									<input name="priceSold[]" type="number" class="short" step="0.01" value="'.$_SESSION['temp']['sales'][$s]['priceSold'] / $_SESSION['temp']['sales'][$s]['qty'].'" />
+									<input name="sold_price_total[]" type="number" class="short" step="0.01" value="'.$_SESSION['temp']['sales'][$s]['priceSold'].'" readonly/>
+									<input name="sold_cosmID[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['sold_cosmID'].'" />
+									<input name="soldRowIDs[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['soldRowIDs'].'" />
+									<input name="priceSoldOld[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['priceSoldOld'].'" />
+									<input name="qtyOld[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['qtyOld'].'" />
+									<input name="sell_netto[]" type="hidden" value="'.$_SESSION['temp']['sales'][$s]['priceIn'].'"/>
+									<input name="sell_available[]" type="hidden" />
+									<i class="fas fa-times  sales" title="'.lang::HANDLING_DELETE.'"></i>
+								</div>';
+								$s++;
+							}?>
+						</div>	
+						<input type="button" value="<?=lang::BTN_ADD_SALE;?>" onclick="saleAdd();" />
+						<div class="row col-5__1st_wide">
+							<input type="text" class="input-hdr bold" value="<?=lang::HDR_TOTAL;?>" disabled />
+							<input name="totalQty" type="number" class="input-hdr bold short" value="<?=$totalQty;?>" readonly />
+							<input class="input-hdr bold short mobile-hide" disabled />
+							<input name="totalSales" type="number" class="input-hdr bold short" value="<?=$totalSales;?>" readonly />
+							<div style="width:3ch;"></div>
+						</div>	
+					</div>
 				</section>
 				
 				<section id="employeeData">
@@ -1136,6 +1140,9 @@ include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');?>
 	const ratesJson = <?=json_encode($staff_rates);?>;
 	const alert_txt = '<?=lang::ALERT_DELETE;?>';
 	const alert_future_date = '<?=lang::ALERT_WRONG_DATE_STATE;?>';
+	const alert_sales_limit = '<?=lang::ALERT_EXCEED_LIMIT;?>';
+	const alert_sales_max = '<?=lang::ALERT_EXCEED_MAX;?>';
+	const profit_lable = '<?=lang::HDR_PROFIT;?>';
 	
 </script>
 <script src = "/js/visit_details.js"></script>

@@ -358,7 +358,7 @@ fieldset.wSign {
 }
 
 .col-3 {
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .col-4__1st_wide {
@@ -505,7 +505,9 @@ input[type="checkbox"] {
 	height: unset;
 	align-self: center;
 }
-
+input[type="date"] {
+	width: 100%;
+}
 select {
 	cursor: pointer;
 }
@@ -946,6 +948,26 @@ p.accent-bg.cal-price {
 	color: var(--clr-accent);
 }
 
+/* ---------- DRAGULA Drag&Drop ---------- */
+.gu-mirror {
+	position: fixed !important;
+	margin: 0 !important;
+	z-index: 9999 !important;
+	opacity: 0.8;
+}
+.gu-hide {
+	display: none !important;
+}
+.gu-unselectable {
+	-webkit-user-select: none !important;
+	-moz-user-select: none !important;
+	-ms-user-select: none !important;
+	user-select: none !important;
+}
+.gu-transit {
+	opacity: 0.2;
+}
+
 /* ---------- TOOLTIP ----------*/
 /* use "data-tooltip" attribute for content in html */
 .tooltip {
@@ -972,7 +994,8 @@ p.accent-bg.cal-price {
 	color: white;
 	padding: 0.5rem;
 	border-radius: 0.3rem;
-	width: 20ch;
+	width: max-content;
+	max-width: 18ch;
 	background: var(--clr-accent);
 }
 
@@ -1093,6 +1116,10 @@ p.accent-bg.cal-price {
 
 	#employees i.far.fa-comment.fa-2x {
 		font-size: 1em;
+	}
+
+	.fa-arrows-alt-v {
+		cursor: move;
 	}
 }
 

@@ -1833,15 +1833,15 @@ function visit_card ($array, $count) {
 				<td colspan="2">' . $array['comment'] .'</td>
 			</tr>';
 		echo '</table>
-		<div class="row" style="width: -webkit-fill-available;
+		<div class="row col-2e" style="width: -webkit-fill-available;
 								position: absolute;
-								bottom: 10px;
+								bottom: 0;
 								margin-right: 20px;">';
 			$catIDs = explode(',',$array['catIDs']);			// ТОЛЬКО ДЛЯ ЛЕНЫ!!! УДАЛИТЬ ДЛЯ ПРОДАКШН
 			if(in_array(7,$catIDs) && strtotime($array['date']) < strtotime(date('d-m-Y'))) { 							// ТОЛЬКО ДЛЯ ЛЕНЫ!!! УДАЛИТЬ ДЛЯ ПРОДАКШН
-				echo '<a class="button center" style="flex: 1;margin-right: 10px;" href="#" onclick="fetch_spent('.$array['id'].','. $count .');return false;" ><i class="fas fa-info-circle"></i>'.lang::HDR_FORMULA.'</a>';	
+				echo '<a class="button center" style="width: auto;" href="#" onclick="fetch_spent('.$array['id'].','. $count .');return false;" ><i class="fas fa-info-circle"></i>'.lang::HDR_FORMULA.'</a>';	
 			} 
-			echo '<a class="button center" style="flex: 1;" href="/visits/visit_details.php?id='. $array['id'] .'&goto=profile" ><i class="fas fa-eye"></i>'. lang::HANDLING_VIEW .'</a>';
+			echo '<a class="button center" style="width: auto;" href="/visits/visit_details.php?id='. $array['id'] .'&goto=profile" ><i class="fas fa-eye"></i>'. lang::HANDLING_VIEW .'</a>';
 		echo '</div>
 	</div>';
 }
