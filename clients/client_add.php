@@ -155,14 +155,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	session_write_close();
 	
-	if ($_POST['backTo'] !='') {
-		header( 'Location: ' . $_POST['backTo']);
-		exit;
+	
+	if($_POST['backTo'] == 'close') {
+		echo "<script>window.close();</script>";
 	} else {
-		header( 'Location: /clients/client_list.php');
-		exit;
-
+		if ($_POST['backTo'] !='') {
+			header( 'Location: ' . $_POST['backTo']);
+		} else {
+		header( 'Location: /clients/client_add.php');
+		}
 	}
+	exit;
+	
+	
+	
 }
 
 $title = lang::H2_NEW_CLIENT;
@@ -205,7 +211,7 @@ echo '<section class="content">';
 				<?=client_source_select($_SESSION['temp']['sourceID']);?>
 			</div>
 			
-			<div class="row" id="refClient" 
+			<div class="row col-2" id="refClient" 
 			<?php if($_SESSION['temp']['refClient'] =='') echo 'style="display:none;"';?> >
 				<label for="refClient"><?php echo lang::HDR_RECOMMENDATION; ?>:</label>
 				<input name="refClient" class="FIO" type="text" value="<?php echo $_SESSION['temp']['refClient']; ?>" />

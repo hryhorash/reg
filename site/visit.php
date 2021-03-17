@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		
 		$url = 'https://api.pipe.bot/push';
 		$data = array(
-					"apikey" 		=> "apikey", 
+					"apikey" 		=> "e4b0c1c8396ffd9e8336944cc7434d1c", 
 					"Content-type"  => "application/json",
 					"segment"		=> "?isAdmin=1",
 					"text"			=> $title . "\n". $msg
@@ -141,18 +141,32 @@ if($_GET['timeFrom'] !='') {
 	
 $title=lang::TITLE_CLIENT_VISIT; 
 //---------------------VIEW--------------------------------------?>
-<!DOCTYPE html><html lang="ru-UA">
+<!DOCTYPE html><html lang="<?=$_SESSION['locale'];?>">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="/layout/css/main.css" type="text/css" media="screen" />
 </head>
-<body style="background-color:white;">
+
+<style>
+	@media screen and (max-width: 900px) {
+		body {
+			padding: var(--padding-std);
+		}
+	}
+	@media screen and (min-width: 768px) {
+		button {
+			margin-top: var(--padding-std);
+		}
+	}
+</style>
+
+<body style="background-color:white;margin-top: 15px;">
 	<?php include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');?>
 	<h2><?=$title;?></h2>
 	
 	<form method="post" id="form" name="client_visit" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>">
-		<fieldset>
+		<fieldset style="margin: 0;margin-right:var(--padding-std)">
 			<div class="row col-3">
 				<label for="name" ><?=lang::HDR_YOUR_NAME;?>*:</label>
 				<input name="name" type="text" placeholder="<?=lang::NAME;?>" value="<?=$_SESSION['temp']['name'];?>" required />
@@ -173,7 +187,6 @@ $title=lang::TITLE_CLIENT_VISIT;
 				</select>
 			</div>
 			
-			
 			<div class="row">
 				<textarea name="comment" placeholder="<?=lang::HDR_COMMENT;?>"><?=$_SESSION['temp']['comment'];?></textarea>
 			</div>
@@ -181,10 +194,8 @@ $title=lang::TITLE_CLIENT_VISIT;
 			<input type="hidden" name="state" value="2">
 			<input type="hidden" name="price_total" value="1">
 			<input type="hidden" name="author" value="0"-->
-				
-	
 		</fieldset>	
 	</form>
-	<button type="submit" form="form" value="Submit" style="margin-top: 10px;"><?=lang::BTN_CLIENT_VISIT;?></button>
+	<button type="submit" form="form" value="Submit"><?=lang::BTN_CLIENT_VISIT;?></button>
 </body>
 </html>

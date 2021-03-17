@@ -102,7 +102,9 @@ echo '<section class="content">';
 					<th class='table-sortable:*'><?=lang::HDR_VOLUME;?></th>
 					<th class="mobile-hide table-sortable:*"><?=lang::HDR_PURPOSE;?></th>
 					<th class="mobile-hide table-sortable:*"><?=lang::HDR_ARTICUL;?></th>
-					<th><?php echo lang::HDR_HANDLING;?></th>
+					<?php if ($_SESSION['pwr'] > 9 ) {?>
+						<th><?php echo lang::HDR_HANDLING;?></th>
+					<?php } ?>
 				</tr>
 			</thead>
 			<tbody>	
@@ -111,22 +113,30 @@ echo '<section class="content">';
 					echo '<tr>
 							<td class="small center" style="max-width:10%;">' . $count	. '</td>';
 							if ($brandID == 1) echo '<td>' . $data[$count]['brand']	. '</td>';
-							echo '<td><a href="/cosmetics/history.php?cosmID='.$data[$count]['id'].'">' . $data[$count]['name']	. '</a></td>
+							echo '<td>';
+								if($_SESSION['pwr'] > 9)
+									echo '<a href="/cosmetics/history.php?cosmID='.$data[$count]['id'].'">' . $data[$count]['name']	. '</a>';
+								else 
+									echo $data[$count]['name'];
+							echo '</td>
 							<td>' . $data[$count]['volume']	. '</td>
 							<td class="mobile-hide">' . cosm_purpose($data[$count]['purpose']). '</td>
-							<td class="mobile-hide">' . $data[$count]['articul']	. '</td>
-							<td class="center">	
-								<a title="'. $handle['change']['title'] . '" href="' . $handle['change']['link_start'] . $data[$count]['id'] . '">' . $handle['change']['button'] . '</a>';
+							<td class="mobile-hide">' . $data[$count]['articul']	. '</td>';
+							if ($_SESSION['pwr'] > 9 ) {
+					
+								echo '<td class="center">	
+									<a title="'. $handle['change']['title'] . '" href="' . $handle['change']['link_start'] . $data[$count]['id'] . '">' . $handle['change']['button'] . '</a>';
+										
+									if ($archive == 0) { ?>
+										<a title="<?php echo $handle['block']['title'] ?>" href="<?php echo $handle['block']['link_start'] . $data[$count]['id'].$handle['block']['link_finish']; ?>" onclick='return confirm("<?php echo $handle['block']['alertMSG'] . '\"'. $data[$count]['name'] . '\"?'; ?>");'><?php echo $handle['block']['button']; ?></a>
+										
+									<?php } else { ?>
+										<a title="<?php echo $handle['restore']['title'] ?>" href="<?php echo $handle['restore']['link_start'] . $data[$count]['id'].$handle['restore']['link_finish']; ?>" onclick='return confirm("<?php echo $handle['restore']['alertMSG'] . '\"'. $data[$count]['name'] . '\"?'; ?>");'><?php echo $handle['restore']['button']; ?></a>
+									<?php }
 									
-								if ($archive == 0) { ?>
-									<a title="<?php echo $handle['block']['title'] ?>" href="<?php echo $handle['block']['link_start'] . $data[$count]['id'].$handle['block']['link_finish']; ?>" onclick='return confirm("<?php echo $handle['block']['alertMSG'] . '\"'. $data[$count]['name'] . '\"?'; ?>");'><?php echo $handle['block']['button']; ?></a>
-									
-								<?php } else { ?>
-									<a title="<?php echo $handle['restore']['title'] ?>" href="<?php echo $handle['restore']['link_start'] . $data[$count]['id'].$handle['restore']['link_finish']; ?>" onclick='return confirm("<?php echo $handle['restore']['alertMSG'] . '\"'. $data[$count]['name'] . '\"?'; ?>");'><?php echo $handle['restore']['button']; ?></a>
-								<?php }
-								
-							echo '</td>
-						</tr>';
+								echo '</td>';
+							}
+						echo '</tr>';
 					$count++;
 				} ?>
 			</tbody>	

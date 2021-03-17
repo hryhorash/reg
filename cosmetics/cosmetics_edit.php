@@ -4,9 +4,13 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/config/config.php');
 include('tabs.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	//var_dump($_POST['archive']);exit;
 	
 	if($_POST['RRP'] == '') $RRP=null;
 	else $RRP=$_POST['RRP'];
+
+	if($_POST['archive'] == null) $archive = 0;
+	else $archive = 1;
 		
 	
 	$sql = "UPDATE cosmetics 
@@ -17,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			volume		= :volume, 
 			RRP			= :RRP, 
 			purpose		= :purpose, 
+			archive		= :archive,
 			`timestamp`	= :timestamp, 
 			author		= :author 
 		WHERE id=:id";
@@ -29,6 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$stmt -> bindValue(':volume', $_POST["volume"], PDO::PARAM_INT);
 		$stmt -> bindValue(':RRP', $RRP, PDO::PARAM_STR);
 		$stmt -> bindValue(':purpose', $_POST["purpose"], PDO::PARAM_STR);
+		$stmt -> bindValue(':archive', $archive, PDO::PARAM_INT);
 		$stmt -> bindValue(':timestamp', date('Y-m-d h:i:s'), PDO::PARAM_STR);
 		$stmt -> bindValue(':author', $_SESSION['userID'], PDO::PARAM_INT);
 		$stmt -> bindValue(':id', $_POST["id"], PDO::PARAM_INT);
@@ -55,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if($_GET['id'] !=''){
 	try {
-		$stmt = $pdo->prepare("SELECT brandID, name, description, articul, volume,RRP,purpose FROM `cosmetics` WHERE id=:id");
+		$stmt = $pdo->prepare("SELECT brandID, name, description, articul, volume,RRP,purpose, archive FROM `cosmetics` WHERE id=:id");
 		$stmt -> bindValue(':id', $_GET['id'], PDO::PARAM_INT);
 		$stmt ->execute();
 		$data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -93,6 +99,10 @@ echo '<section class="content">';
 				<input name="articul" type="text" value="<?php echo $data['articul']; ?>" />
 			
 				<?=cosm_purpose_select($data['purpose']);?>
+
+				<label for="archive"><?=lang::HDR_ARCHIVE;?>:</label>
+				<input name="archive" type="checkbox" value="1" <?php if($data['archive'] == 1) echo 'checked'; ?> />
+
 			</div>
 			<div class="row" id="RRP"<?php if($data['purpose'] == 0 || $data['purpose'] == 3) echo 'style="display:none"';?>>
 				<label for="RRP"><?=lang::HDR_RRP;?>:</label>

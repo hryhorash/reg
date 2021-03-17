@@ -4,6 +4,8 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/config/config.php');
 include('tabs.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+	//var_dump($_POST);exit;
 	$i=0;
 	if (isset($_POST['receivedID'])) {
 		foreach($_POST['receivedID'] as $item) {
@@ -25,7 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$expire[$i] = $item;
 		$i++;
 	}
-	
 	function add_cosm_qty($cosm_id, $priceIn, $qtyIn, $discount, $expire) {
 		if ($qtyIn != 0 && $qtyIn != '') {
 			require($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
@@ -100,17 +101,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$delete -> bindValue(':receivedID', $receivedID, PDO::PARAM_INT);
 				
 		if ($_POST['state'] > 3) { //ДО статуса заказ получен не в счет
-			$check = $pdo->prepare("SELECT sold.clientID, cosmetics.name, CONCAT(clients.name, ' ', clients.surname) as client, sold.date FROM `sold` 
-				LEFT JOIN received ON sold.receivedID=received.id
-				LEFT JOIN cosmetics ON received.cosmID=cosmetics.id
-				LEFT JOIN clients ON sold.clientID=clients.id
-				
-				WHERE received.id=:receivedID");
+			$check = $pdo->prepare("SELECT received.soldToID, cosmetics.name, CONCAT(clients.name, ' ', clients.surname) as client, received.dateOut 
+								FROM `received` 
+								LEFT JOIN cosmetics ON received.cosmID=cosmetics.id
+								LEFT JOIN clients ON received.soldToID=clients.id
+								
+								WHERE received.id=:receivedID");
 			$check -> bindValue(':receivedID', $receivedID, PDO::PARAM_INT);
 			$check -> execute();
 			$data = $check->fetch(PDO::FETCH_ASSOC);
 			
-			if(!empty($data)) {
+			if($data['soldToID'] != null) {
 				$text = $data['name'] . lang::MSG_SOLD . $data['client'] . ' ' . $data['date'];
 				if(isset($_SESSION['error'])) {
 					$_SESSION['error'] = $_SESSION['error'] . '<br />' . $text;
@@ -245,20 +246,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			if ($cosmID !='' && $_POST['qtyIn'][$i] > 0)
 				add_cosm_qty($cosmID, $priceIn, $_POST['qtyIn'][$i], $discount[$i], $expire[$i]);
 				
-				//обновляем RRP при необходимости
-				if($_POST['RRP'][$i] > 0) {
-					$RRP_update = $pdo->prepare("
-						UPDATE cosmetics 
-						SET RRP			= :RRP, 
-							`timestamp`	= :timestamp, 
-							author		= :author
-						WHERE id 		= :cosmID
-						");
-					$RRP_update -> bindValue(':RRP', $_POST['RRP'][$i], PDO::PARAM_STR);
-					$RRP_update -> bindValue(':timestamp', date('Y-m-d h:i:s'), PDO::PARAM_STR);
-					$RRP_update -> bindValue(':author', $_SESSION['userID'], PDO::PARAM_INT);
-					$RRP_update -> bindValue(':cosmID', $cosmID, PDO::PARAM_INT);
-					$RRP_update -> execute();
+				//обновляем RRP и статус архива при необходимости
+				switch(true) {
+					case($_POST['RRP'][$i] > 0):
+						$sql = "UPDATE cosmetics 
+								SET RRP			= :RRP,
+									archive		= 0, 
+									`timestamp`	= :timestamp, 
+									author		= :author
+								WHERE id 		= :cosmID";
+						$rrp=1;
+						break;
+
+					case($_POST['archive'][$i] == 1):
+						$sql = "UPDATE cosmetics 
+								SET archive		= 0, 
+									`timestamp`	= :timestamp, 
+									author		= :author
+								WHERE id 		= :cosmID";
+						$rrp=0;
+						break;
+					
+					default:
+						$rrp = 0;
+						$sql = "";
+						break;
+				}
+				if ($sql != "") {
+					
+					$cosm_update = $pdo->prepare($sql);
+					$cosm_update -> bindValue(':timestamp', date('Y-m-d h:i:s'), PDO::PARAM_STR);
+					if($rrp == 1) $cosm_update -> bindValue(':RRP', $_POST['RRP'][$i], PDO::PARAM_STR);
+					$cosm_update -> bindValue(':author', $_SESSION['userID'], PDO::PARAM_INT);
+					$cosm_update -> bindValue(':cosmID', $cosmID, PDO::PARAM_INT);
+					$cosm_update -> execute();
 				}
 			
 		}
@@ -269,7 +290,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	//END POST
 	session_write_close();
-	header( 'Location: /cosmetics/invoice_list.php');
+	header( 'Location: /cosmetics/invoice_list.php?tab=archive');
 	exit;
 }
 
@@ -286,7 +307,7 @@ if ($_GET['id'] != '') {
 	$supplierData=$supplier->fetch(PDO::FETCH_ASSOC);
 	
 	
-	$sql="SELECT GROUP_CONCAT(DISTINCT received.id) as receivedID, invoices.id, invoices.name as invoice, invoices.date, invoices.datePaid, invoices.dateReceived, cosmetics.volume, sum(received.qtyIn) as qty, received.priceIn, cosmetics.articul, invoices.locationID, invoices.supplierID, discount, state, expire, cosmID, cosmetics.RRP,
+	$sql="SELECT GROUP_CONCAT(DISTINCT received.id) as receivedID, invoices.id, invoices.name as invoice, invoices.date, invoices.datePaid, invoices.dateReceived, cosmetics.volume, sum(received.qtyIn) as qty, received.priceIn, cosmetics.articul, invoices.locationID, invoices.supplierID, discount, state, expire, cosmID, cosmetics.RRP, cosmetics.archive,
 			CASE 
 				WHEN LENGTH(articul) THEN CONCAT(articul,', ', brands.name, ' ', cosmetics.name,', ',volume)
 				ELSE CONCAT(brands.name, ' ', cosmetics.name,', ',volume)
@@ -352,7 +373,7 @@ echo '<section class="content">';
 		<div class="row col-6__1st_wide">
 			<div style="position: relative;">
 				<input name="cosm[]" type="text" style="width: -webkit-fill-available;" placeholder="<?=lang::HDR_ITEM_NAME;?>" />
-				<a class="inside-input" href="/cosmetics/cosmetics_add.php?backTo=close" target="_blank" title="<?=lang::H2_COSMETICS;?>" tabindex="-1">
+				<a class="inside-input" href="#" onclick="window.open('/cosmetics/cosmetics_add.php?backTo=close');return false" title="<?=lang::H2_COSMETICS;?>" tabindex="-1">
 					<i class="fas fa-plus"></i>
 				</a>
 			</div>
@@ -366,6 +387,7 @@ echo '<section class="content">';
 			<label name="expire[]" style="color: grey;"><?=lang::HDR_EXPIRE;?>:</label>
 			<input name="expire[]" type="date" style="color: grey; grid-column: 2/5;"/>
 			<input name="RRP[]" class="short" style="grid-column: 5/6;" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_RRP;?>" />
+			<input name="archive[]" type="hidden" />
 		</div>
 	</template>
 
@@ -422,6 +444,7 @@ echo '<section class="content">';
 						<label name="expire[]" style="color: grey;">'.lang::HDR_EXPIRE.':</label>
 						<input name="expire[]" type="date"  style="color: grey; grid-column: 2/5;" value="'.$data[$count]['expire'].'" />
 						<input name="RRP[]" type="number" step="0.01" min="0" class="short" style="grid-column: 5/6;" value="'.$data[$count]['RRP'].'"/>
+						<input name="archive[]" type="hidden" value="'.$data[$count]['archive'].'"/>
 						<input name="expire_old[]" type="hidden" value="'.$data[$count]['expire'].'" />
 						<input name="cosmID_old[]" type="hidden" value="'.$data[$count]['cosmID'].'" />
 						<input name="qtyIn_old[]" type="hidden" value="'.$data[$count]['qty'].'" />
@@ -440,7 +463,7 @@ echo '<section class="content">';
 				<div class="row col-6__1st_wide">
 					<div style="position: relative;">
 						<input name="cosm[]" class="cosmSupplier" type="text" style="width: -webkit-fill-available;" placeholder="<?=lang::HDR_ITEM_NAME;?>" />
-						<a class="inside-input" href="/cosmetics/cosmetics_add.php?backTo=close" target="_blank" title="<?=lang::H2_COSMETICS;?>" tabindex="-1">
+						<a class="inside-input" href="#" onclick="window.open('/cosmetics/cosmetics_add.php?backTo=close');return false" title="<?=lang::H2_COSMETICS;?>" tabindex="-1">
 							<i class="fas fa-plus"></i>
 						</a>
 					</div>
@@ -454,6 +477,8 @@ echo '<section class="content">';
 					<label name="expire[]" style="color: grey;"><?=lang::HDR_EXPIRE;?>:</label>
 					<input name="expire[]" type="date" style="color: grey; grid-column: 2/5;" />
 					<input name="RRP[]" class="short" style="grid-column: 5/6;" type="number" step="0.01" min="0" placeholder="<?=lang::PLACEHOLDER_RRP;?>" />
+					<input name="archive[]" type="hidden"/>
+						
 				</div>
 			<input name="new" type="hidden" value="<?=$_GET['new'];?>" />
 			<?php }?>
@@ -562,8 +587,10 @@ $('.cosmSupplier').autocomplete({
 	onSelect: function (suggestion) {
 		let cosmID = suggestion.data.split('--')[0];
 		let RRP = suggestion.data.split('--')[1];
+		let archive = suggestion.data.split('--')[2];
 		$(this).parent().siblings("input[name='cosmID[]']").val(cosmID);
 		$(this).parent().siblings("input[name='RRP[]']").prop('placeholder', RRP);
+		$(this).parent().siblings("input[name='archive[]']").val(archive);
 	}
 });
 
@@ -601,8 +628,10 @@ function lineAdd() {
 		onSelect: function (suggestion) {
 			let cosmID = suggestion.data.split('--')[0];
 			let RRP = suggestion.data.split('--')[1];
+			let archive = suggestion.data.split('--')[2];
 			$(this).parent().siblings("input[name='cosmID[]']").val(cosmID);
 			$(this).parent().siblings("input[name='RRP[]']").prop('placeholder', RRP);
+			$(this).parent().siblings("input[name='archive[]']").val(archive);
 		}
 	});
 }

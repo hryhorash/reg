@@ -601,8 +601,13 @@ function visit_state_toggle() {
 		$("#nettoData").show();
 		$("#spentData").show();
 		$("#salesData").show();
-		$("#employeeData").show();
-		$("#totals").show();
+		if (pwr >= 90) {
+			$("#employeeData").show();
+			$("#totals").show();
+		} else {
+			$("#employeeData").hide();
+			$("#totals").hide();
+		}
 	} else {
 		$("#nettoData").hide();
 		$("#spentData").hide();

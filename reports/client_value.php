@@ -63,12 +63,15 @@ echo '<section class="content">';
 						echo '<tr>
 							<td class="center small">' . ($count+1) . '</td>
 							<td><a href="/clients/client_profile.php?id='.$data[$count]['clientID'].'" title="'.lang::HDR_CLIENT_PROFILE.'">' . FIO($data[$count]['name'],$data[$count]['surname'],$data[$count]['prompt'])	. '</a></td>
-							<td class="center">' . correctNumber($data[$count]['y_cur']) . curr() . '<br />
-												<span class="inactive">' . $data[$count]['y_cur_v'] . '</span></td>
-							<td class="center">' . correctNumber($data[$count]['y_prev']) . curr() .  '<br />
-												<span class="inactive">' . $data[$count]['y_prev_v'] . '</span></td>
-							<td class="center">' . correctNumber($data[$count]['y_pprev']) . curr() .  '<br />
-												<span class="inactive">' . $data[$count]['y_pprev_v'] . '</span></td>
+							<td class="center tooltip" data-tooltip="'.lang::MENU_VISITS . ': ' .$data[$count]['y_cur_v'].'">' . 
+								correctNumber($data[$count]['y_cur']) . curr() . '
+							</td>
+							<td class="center tooltip" data-tooltip="'.lang::MENU_VISITS . ': ' .$data[$count]['y_prev_v'].'">' . 
+								correctNumber($data[$count]['y_prev']) . curr() .  '
+							</td>
+							<td class="center tooltip" data-tooltip="'.lang::MENU_VISITS . ': ' .$data[$count]['y_pprev_v'].'">' . 
+								correctNumber($data[$count]['y_pprev']) . curr() .  '
+							</td>
 							<td class="center bold">' . correctNumber($data[$count]['y_cur'] + $data[$count]['y_prev'] + $data[$count]['y_pprev']) .  curr() . '</td>
 							<td class="center"><a title="'. lang::HANDLING_ARCHIVE .'" href="/config/archive.php?id=' . $data[$count]['clientID'].'&table=clients&archive=1&URL='.$_SERVER['PHP_SELF'].'" onclick=\'return confirm("'. lang::ALERT_BLOCK_DEFAULT . '\"'. FIO($data[$count]['name'],$data[$count]['surname'],$data[$count]['prompt']) . '\"?");\'><i class="fas fa-trash"></i></a></td>
 						</tr>';
@@ -90,9 +93,9 @@ echo '<section class="content">';
 			<tfoot>
 				<tr>
 					<th colspan="2"><?=lang::HDR_TOTAL;?>:</th>
-					<th class="center"><?=correctNumber($total_curr) . curr() .'<br /><span class="inactive">' . $total_curr_v .'</span>';?></th>
-					<th class="center"><?=correctNumber($total_y_prev) . curr() .'<br /><span class="inactive">' . $total_y_prev_v .'</span>';?></th>
-					<th class="center"><?=correctNumber($total_y_pprev) . curr() .'<br /><span class="inactive">' . $total_y_pprev_v .'</span>';?></th>
+					<th class="center tooltip" data-tooltip="<?=lang::MENU_VISITS . ': ' . $total_curr_v;?>"><?=correctNumber($total_curr) . curr();?></th>
+					<th class="center tooltip" data-tooltip="<?=lang::MENU_VISITS . ': ' . $total_y_prev_v;?>"><?=correctNumber($total_y_prev) . curr();?></th>
+					<th class="center tooltip" data-tooltip="<?=lang::MENU_VISITS . ': ' . $total_y_pprev_v;?>"><?=correctNumber($total_y_pprev) . curr();?></th>
 					<th></td>
 					<th></th>
 				</tr>

@@ -154,7 +154,7 @@ class lang {
 	const HDR_SERVICES = 'Послуги'; 
 	const HDR_FORMULA = 'Формула'; 
 	const HDR_SALE_ARCHIVE = 'Архів продажів'; 
-	
+	const HDR_ARCHIVE = "Архів";
 	
 	const HDR_CATEGORY = 'Категорія';
 	const HDR_SUBCATEGORY = 'Підкатегорія';
@@ -177,6 +177,7 @@ class lang {
 	const HDR_HANDLING = 'Керування';
 	const HANDLING_VIEW = 'Детальніше';
 	const HANDLING_CHANGE = 'Редагувати';
+	const HANDLING_UNDO = 'Скасувати продаж';
 	const HANDLING_BLOCK = 'Заблокувати';
 	const HANDLING_ARCHIVE = 'Перенести до архіву';
 	const HANDLING_APPROVE = 'Візит відбувся';
@@ -219,7 +220,7 @@ class lang {
 	const HDR_DOB = 'День народження';
 	const HDR_VOLUME = 'Місткість';
 	const HDR_PURPOSE = 'Призначення';
-		const HDR_PURPOSE_WORK = 'в роботу';
+		const HDR_PURPOSE_WORK = 'в роботі';
 		const HDR_PURPOSE_SALE = 'на продаж';
 		const HDR_PURPOSE_BOTH = 'універсальна';
 		const HDR_PURPOSE_ACCOUNT = 'облік';
@@ -245,6 +246,7 @@ class lang {
 	const EXPL_WORK_PRICE = 'Сума вказується тільки якщо необхідно вирахувати % зарплатні робітника';
 	const EXPL_PRICE_PER_GR = 'Орієнтовно. За основу береться найбільш дорога позиція із закупівель';
 	
+	const TXT_BALANCE = 'Баланс за період';
 	
 	//HEAD
 	const SEARCH_CLIENT_PLACEHOLDER = 'ПІБ клієнта';
@@ -326,6 +328,7 @@ class lang {
 	const MENU_CALENDAR = 'Календар';
 	const SIDE_CALENDAR = 'календар';
 	const MENU_CLIENT_VALUE = 'Цінність клієнтів';
+	const MENU_WAGES = 'Зарплати';
 	
 	
 	const TITLE_CLIENT_VISIT = 'Запис на обслуговування';
@@ -360,6 +363,7 @@ class lang {
 	const HDR_NEW_SALE = 'Новий продаж';
 	const H2_FINANCE_REPORT = 'Фінансовий результат';
 	const H2_SALES_REPORT = 'Звіт з продажів';
+	const H2_EXPENCES_WORKS_MATCH = 'Витрати та роботи';
 	const HDR_REVENUE = 'Дохід';
 	const HDR_REVENUE_TOTAL = 'Доходи, всього';
 		const HDR_REVENUE_SERVICES = 'роботи';
@@ -374,10 +378,10 @@ class lang {
 		const HDR_SALE_PERIOD = 'Днів у продажу';
 	const HDR_DATE_SALES_RANGE = 'Дата (закупівля / продаж)';
 	const HDR_PURCHASE_DETAILS = 'Переглянути закупівлю';
-	
+	const H2_FINANCE_CAT = 'Звіт за категоріями робіт';
 		
 	const TOOLTIP_PROFILE = 'Переглянути профіль';
-	const TOOLTIP_VISIT_START = 'начало об ';
+	const TOOLTIP_VISIT_START = 'початок об ';
 	const TOOLTIP_VISIT_END = 'до ';
 	
 	//Загрузка файлов
@@ -407,6 +411,10 @@ class lang {
 	const HDR_ANALYSIS = 'Аналіз';
 	const HDR_PROFIT_PER_MONTH_AVG = 'Прибуток на місяць, середній';
 	const HDR_EXPENCES_TO_REVENUE = 'Доля витрат в обороті';
+	const H2_CLIENT_TREE = 'Дерево клієнтів';
+		const HDR_LEVEL2 = '2 рівень';
+		const HDR_LEVEL3 = '3 рівень';
+		const HDR_MORE_LVL = 'ще (рівні 4-6)';
 }
 
  ?>

@@ -154,7 +154,7 @@ class lang {
 	const HDR_SERVICES = 'Услуги'; 
 	const HDR_FORMULA = 'Формула'; 
 	const HDR_SALE_ARCHIVE = 'Архив продаж'; 
-	
+	const HDR_ARCHIVE = "Архив";
 	
 	const HDR_CATEGORY = 'Категория';
 	const HDR_SUBCATEGORY = 'Подкатегория';
@@ -177,12 +177,13 @@ class lang {
 	const HDR_HANDLING = 'Управление';
 	const HANDLING_VIEW = 'Детальнее';
 	const HANDLING_CHANGE = 'Редактировать';
+	const HANDLING_UNDO = 'Отменить продажу';
 	const HANDLING_BLOCK = 'Заблокировать';
 	const HANDLING_ARCHIVE = 'Перенести в архив';
 	const HANDLING_APPROVE = 'Визит состоялся';
 	const HANDLING_NOSHOW = 'Визит не состоялся. No show';
 	const HANDLING_DELETE = 'Удалить';
-	const ALERT_BLOCK_DEFAULT = 'Переместить в архив ';	//пробел в конце нужен
+	const ALERT_BLOCK_DEFAULT = 'Переместить 	в архив ';	//пробел в конце нужен
 	const ALERT_BLOCK = 'Заблокировать пользователя ';	//пробел в конце нужен
 	const ALERT_BLOCK_LOCATION = 'Отправить в архив ';
 	const ALERT_DELETE = 'Внимание! Операция не может быть отменена\nУдалить ';	//пробел в конце нужен
@@ -219,8 +220,8 @@ class lang {
 	const HDR_DOB = 'День рождения';
 	const HDR_VOLUME = 'Ёмкость';
 	const HDR_PURPOSE = 'Назначение';
-		const HDR_PURPOSE_WORK = 'в работу';
-		const HDR_PURPOSE_SALE = 'на продажу';
+		const HDR_PURPOSE_WORK = 'в работе';
+		const HDR_PURPOSE_SALE = 'в продаже';
 		const HDR_PURPOSE_BOTH = 'универсальная';
 		const HDR_PURPOSE_ACCOUNT = 'учёт';
 	const HDR_ARTICUL = 'Артикул';
@@ -245,6 +246,7 @@ class lang {
 	const EXPL_WORK_PRICE = 'Сумма указывается только если нужно высчитать % зарплаты сотрудника';
 	const EXPL_PRICE_PER_GR = 'Ориентировочно. За основу берется самая дорогая единица товара из закупки';
 	
+	const TXT_BALANCE = 'Баланс за период';
 	
 	//HEAD
 	const SEARCH_CLIENT_PLACEHOLDER = 'ФИО клиента';
@@ -326,6 +328,7 @@ class lang {
 	const MENU_CALENDAR = 'Календарь';
 	const SIDE_CALENDAR = 'календарь';
 	const MENU_CLIENT_VALUE = 'Ценность клиентов';
+	const MENU_WAGES = 'Зарплаты';
 	
 	
 	const TITLE_CLIENT_VISIT = 'Запись на обслуживание';
@@ -359,6 +362,7 @@ class lang {
 	const HDR_NEW_VISIT = 'Новый визит';
 	const HDR_NEW_SALE = 'Новая продажа';
 	const H2_FINANCE_REPORT = 'Финансовый результат';
+	const H2_EXPENCES_WORKS_MATCH = 'Расходы и работы';
 	const H2_SALES_REPORT = 'Отчет по продажам';
 	const HDR_REVENUE = 'Доход';
 	const HDR_REVENUE_TOTAL = 'Доходы, всего';
@@ -374,6 +378,7 @@ class lang {
 		const HDR_SALE_PERIOD = 'Дней в продаже';
 	const HDR_DATE_SALES_RANGE = 'Дата (закупка / продажа)';
 	const HDR_PURCHASE_DETAILS = 'Посмотреть закупку';
+	const H2_FINANCE_CAT = 'Отчет по категориям работ';
 	
 		
 	const TOOLTIP_PROFILE = 'Посмотреть профиль';
@@ -407,6 +412,11 @@ class lang {
 	const HDR_ANALYSIS = 'Анализ';
 	const HDR_PROFIT_PER_MONTH_AVG = 'Прибыль в месяц, средняя';
 	const HDR_EXPENCES_TO_REVENUE = 'Доля расходов в обороте';
+	const H2_CLIENT_TREE = 'Дерево клиентов';
+		const HDR_LEVEL2 = '2 уровень';
+		const HDR_LEVEL3 = '3 уровень';
+		const HDR_MORE_LVL = 'ещё (уровни 4-6)';
+
 }
 
  ?>

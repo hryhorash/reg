@@ -63,9 +63,9 @@ echo '<section class="content">';
 		<table class='stripy table-autosort table-autofilter'>
 			<thead>
 				<tr>
-					<th style='width: 10%;'>№			</th>
+					<th style='width: max-content;'>№			</th>
 					<th class='table-sortable:*'><?=lang::HDR_ITEM_NAME;?></th>
-					<th><?php echo lang::HDR_HANDLING;?></th>
+					<th style='width: max-content;'><?php echo lang::HDR_HANDLING;?></th>
 				</tr>
 			</thead>
 			<tbody>	

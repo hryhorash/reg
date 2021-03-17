@@ -1000,6 +1000,25 @@ function cat_list ($inmenu = 1, $selected=null, $filter=null) { // катего�
 	}
 }
 
+function cat_list_fin ($selected=null) { // категории затрат
+	require($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
+	$stmt = $pdo->prepare("SELECT DISTINCT category, expences_cat.id
+							FROM expences_cat 
+							LEFT JOIN expences_subcat ON expences_cat.id = expences_subcat.catID
+							LEFT JOIN expences_works ON expences_cat.id = expences_works.expencesCatID
+							WHERE expences_works.worktypeCatID > 0");
+	$stmt->execute();
+	echo '<option value="">' . lang::SELECT_DEFAULT . '</option>';
+		
+	while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		echo '<option value="'.$row["id"].'"';
+			if($selected == $row["id"]) echo 'selected';
+		
+		echo '>' . $row["category"] . '</option>';
+		
+	}
+}
+
 
 //// Расходы с заданными ставками (для фин.отчета)
 function stakesExpenses($subcatID, $month) {
@@ -1437,7 +1456,7 @@ function time_options($selected = null, $site = 0, $openTime = 0,$closeTime = 24
 	
 	echo '<option value="00:00">' . lang::SELECT_DEFAULT . '</option>';
 	for ($i = $openTime; $i < $closeTime; $i++) {
-		if ($i<10) $n= '0' . $i;
+		if ($i<10 && substr($i, 0, 1) != 0) $n= '0' . $i;
 		else $n = $i;
 		foreach ($minutes as $min) {
 			if($i < 24) {
@@ -1490,7 +1509,7 @@ function event_grid_visit($visitData, $weekday = null, $forSite = null) {
 	
 	switch(true) {
 		case (mb_substr($visitData['startTime'],0,2) < $_SESSION['openFrom']
-		      && mb_substr($visitData['endTime'],0,2) > $_SESSION['openFrom']):
+		      && mb_substr($visitData['endTime'],0,2) >= $_SESSION['openFrom']):
 			$visit_start = $_SESSION['openFrom'];
 			$visit_end	 = $visitData['endTime'];
 			$notice = '<i class="fas fa-exclamation-triangle attention" title="'.lang::TOOLTIP_VISIT_START . $visitData['startTime'] .'"></i>';
@@ -1533,14 +1552,16 @@ function event_grid_visit($visitData, $weekday = null, $forSite = null) {
 							<a href="/visits/visit_details.php?id='.$visitData['id'].'&goto=dashboard">' . FIO($visitData['clientName'],$visitData['clientSurname'],$visitData['prompt']) . '</a>';
 					else echo FIO($visitData['clientName'],$visitData['clientSurname']) . ': ' . $visitData['works'];
 					
-					echo $notice . '</p>
-					<p class="cal-price';
-						//отмечаем визиты, которые еще не финализированы, но уже в прошлом
-						if(strtotime($visitData['date']) < strtotime(date('d-m-Y')) &&$visitData['state'] < 8 ) {
-							echo ' accent-bg';
-						}
-					
-					echo '">'.$visitData['price_total'].curr().'</p>';
+					echo $notice . '</p>';
+					if($_SESSION['pwr'] > 9) {
+						echo '<p class="cal-price';
+							//отмечаем визиты, которые еще не финализированы, но уже в прошлом
+							if(strtotime($visitData['date']) < strtotime(date('d-m-Y')) &&$visitData['state'] < 8 ) {
+								echo ' accent-bg';
+							}
+						
+						echo '">'.$visitData['price_total'].curr().'</p>';
+					}
 				}
 		echo '</div>';
 	}
@@ -1589,7 +1610,7 @@ function cal_emptyCell_wLink($gridRowFrom, $date, $site=null) {
 	}
 	
 	$emptyCell = '<div class="grid-cell" style="grid-row: '.$gridRowFrom.'/'.($gridRowFrom+2).';grid-column:1 / 10;" title="'.$timeFrom.'"><a href="'.$url.'&date='.$date.'&timeFrom='.$timeFrom.'&goto=dashboard" class="fill-div">'.$plusSign.'</a></div>';
-	
+	$emptynoLink = '<div class="grid-cell" style="grid-row: '.$gridRowFrom.'/'.($gridRowFrom+2).';grid-column:1 / 10; background-color:white;" title="'.$timeFrom.'"></div>';
 	//скрываем пустое время для сайта, если оно "сегодня" и уже в прошлом
 	if(date('Y-m-d') == $date && $site != null) {
 		switch(date("i")) {
@@ -1615,7 +1636,10 @@ function cal_emptyCell_wLink($gridRowFrom, $date, $site=null) {
 			echo $emptyCell;
 		}	
 		
-	} else 	echo $emptyCell;	
+	} else 	{
+		if($_SESSION['pwr'] >= 10) echo $emptyCell;	
+		else echo $emptynoLink;
+	}
 }
 
 function cal_emptyCell_taken_gap($gridRowFrom, $gridRowTill) {
@@ -1935,8 +1959,10 @@ function cosm_history_sales($cosmID, $offset=0, $limit=10) {
 						<th>'.lang::DATE.'</th>
 						<th>'.lang::HDR_NAME.'</th>
 						<th>'.lang::HDR_PRICE.'</th>
-						<th>'.lang::HDR_PROFIT.'</th>
-					</tr>
+						<th>'.lang::HDR_PROFIT.'</th>';
+						if($_SESSION['pwr'] >=90) 
+							echo '<th>'.lang::HDR_HANDLING.'</th>';
+					echo '</tr>
 				</thead>
 				<tbody>';
 				$count=1;
@@ -1945,14 +1971,18 @@ function cosm_history_sales($cosmID, $offset=0, $limit=10) {
 							<td class="center">' . correctDate($data[$count]['dateOut']) . '</td>
 							<td><a href="/clients/client_profile.php?id='.$data[$count]['clientID'].'" title="'.lang::HDR_CLIENT_PROFILE.'">' . FIO($data[$count]['client_name'],$data[$count]['surname'],$data[$count]['prompt'])	. '</a></td>
 							<td class="center">' . correctNumber($data[$count]['priceOut']) . '</td>
-							<td class="center">' . correctNumber($data[$count]['priceOut'] - $data[$count]['priceIn']) . curr()	. '</td>
-						</tr>';
+							<td class="center">' . correctNumber($data[$count]['priceOut'] - $data[$count]['priceIn']) . curr()	. '</td>';
+							if($_SESSION['pwr'] >=90) 
+								echo '<td class="center"><i class="fas fa-undo" title="'.lang::HANDLING_UNDO.'" id='.$data[$count]['soldID'].'></i></td>';
+						echo '</tr>';
 						$count++;
 					}
-						echo '<tr>
+					echo '<tr>
 						<th colspan="3" style="text-align:right;">'.lang::HDR_TOTAL.':</th>
-						<th>'.correctNumber($total_profit) . curr()	. '</th>
-					</tr>
+						<th>'.correctNumber($total_profit) . curr()	. '</th>';
+						if($_SESSION['pwr'] >=90) 
+							echo '<th></th>';
+					echo '</tr>
 				</tbody>	
 			</table>';
 			echo list_navigation_buttons($count,$offset,$limit, null, 'sale');
@@ -1970,6 +2000,13 @@ function get_sum_from_array($array, $approx = 0) {
 	}
 	if ($approx >= 0) return correctNumber($res,$approx);
 	else return $res;
+}
+
+function yes_no_ticks($value){
+	if($value == 1) $res = '<i class="fas fa-check"></i>';
+	else $res = '<i class="fas fa-times"></i>';
+
+	return $res;
 }
 
 ?>

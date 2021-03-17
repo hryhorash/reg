@@ -789,7 +789,13 @@ echo '</section>';
 echo '<section class="content">';
 	include($_SERVER['DOCUMENT_ROOT'].'/config/session_messages.php');
 	if($_GET['id'] > 0 || isset($_GET['new'])) {?>
-		<h2><?=$title;?></h2>
+		<h2>
+			<?php 
+				echo $title;
+				if($_SESSION['temp']['clientID'] > 0)
+					echo '<a href="/clients/client_edit.php?id=' . $_SESSION['temp']['clientID'] . '&goto=visitDetails&visitID='.$_GET['id'].'"><i class="fas fa-edit"></i></a>';
+			?> 
+		</h2>
 		
 		
 		<template id="wrk">
@@ -830,6 +836,9 @@ echo '<section class="content">';
 					</select>
 					<label for="clientID"><?=lang::TBL_CLIENT;?>:</label>
 					<input name="customers" class="FIO" placeholder="<?=lang::SEARCH_CLIENT_PLACEHOLDER;?>" value="<?php if(isset($_SESSION['temp']['customers'])) echo htmlspecialchars($_SESSION['temp']['customers']); else echo FIO($_SESSION['temp']['clientName'],$_SESSION['temp']['clientSurname'],$_SESSION['temp']['prompt']);?>" autocomplete="off">
+						<a class="inside-input" style="margin-top:203px;" href="#" onclick="window.open('/clients/client_add.php?backTo=close');return false" title="<?=lang::H2_NEW_CLIENT;?>" tabindex="-1">
+							<i class="fas fa-plus"></i>
+						</a>
 					<input name="clientID" type="hidden" value="<?=$_SESSION['temp']['clientID'];?>">
 					<label for="state"><?=lang::HDR_VISIT_STATE;?>:</label>
 					<select name="state" required />
@@ -1009,17 +1018,16 @@ echo '<section class="content">';
 						</div>	
 					</div>
 				</section>
-				
 				<section id="employeeData">
-					<p class="title" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> ><?=lang::HDR_COST_PER_EMPLOYEE;?></p>
-					<div class="row col-5__1st_wide" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?>>
+					<p class="title" ><?=lang::HDR_COST_PER_EMPLOYEE;?></p>
+					<div class="row col-5__1st_wide">
 						<input class="input-hdr bold" value="<?=lang::HDR_EMPLOYEE;?>"		   disabled />
 						<div style="width:5ch;"></div>
 						<input class="input-hdr bold medium" value="<?=lang::HDR_TOTAL . ', ' . curr();?>" disabled />
 						<input class="input-hdr bold medium" value="<?=lang::HDR_WAGE . ', ' . curr();?>"  disabled />
 						<input class="input-hdr bold medium" value="<?=lang::HDR_TIPS . ', ' . curr();?>"  disabled />
 					</div>
-					<div id="employees" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?>>
+					<div id="employees">
 						
 							<?php
 							
@@ -1035,7 +1043,7 @@ echo '<section class="content">';
 										<input name="staffRowIDs[]"		type="hidden" 						  value="' . $staffRowIDs[$e] . '" 			/>'; //id уже внесенного
 									echo '</div>';
 									echo '<div class="row"';
-										if($staffComments[$e] == '') echo 'style="display:none"';
+										if($staffComments[$e] == '') echo 'style="display:none;"';
 									echo '>
 										<textarea name="staffComments[]" placeholder="'.lang::HDR_COMMENT.'" >'.htmlspecialchars($staffComments[$e]).'</textarea>';
 									echo '</div>';
@@ -1058,7 +1066,7 @@ echo '<section class="content">';
 							} ?>
 					</div>
 				</section>
-				<section id="totals" <?php if($_SESSION['pwr'] < 90) echo 'style="display:none"';?> >
+				<section id="totals">
 					<p class="title"><?=lang::HDR_VISIT_TOTALS;?></p>
 					<div class="row col-4__1st_wide">
 						<input class="input-hdr bold" value="<?=lang::HDR_ITEM_NAME;?>"	  disabled />
@@ -1143,6 +1151,7 @@ include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');?>
 	const alert_sales_limit = '<?=lang::ALERT_EXCEED_LIMIT;?>';
 	const alert_sales_max = '<?=lang::ALERT_EXCEED_MAX;?>';
 	const profit_lable = '<?=lang::HDR_PROFIT;?>';
+	const pwr = <?=$_SESSION['pwr'];?>
 	
 </script>
 <script src = "/js/visit_details.js"></script>

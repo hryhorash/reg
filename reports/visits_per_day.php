@@ -86,8 +86,8 @@ echo '<section class="content">';
 			foreach($revenue as $row) {
 				echo '<tr>
 					<td><a href="/visits/visits_list.php?state=10&date='.$row['date'].'">'. correctDate($row['date']) .'</a></td>
-					<td class="center">'. correctNumber($row[revenue]) .'</td>
-					<td class="center">'. correctNumber($row[wages]) .'</td>
+					<td class="center">'. correctNumber($row['revenue']) .'</td>
+					<td class="center">'. correctNumber($row['wages']) .'</td>
 				</tr>';
 			} ?>
 		</tbody>	

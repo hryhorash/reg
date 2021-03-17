@@ -9,7 +9,7 @@ else $brandID = 1;
 // ?запрос с учетом расхода "универсальной" косметики (с округлением в большую сторону)
 $sql = "SELECT cosmetics.id, brandID, brands.name as brand, cosmetics.name, articul, cosmetics.volume
 	, SUM(received.qtyIn) * cosmetics.volume as received_V
-    , MAX(received.priceIn) / cosmetics.volume as max_price_gr
+    , MAX(received.priceIn / received.qtyIn) / cosmetics.volume as max_price_gr
     , tbl_spent.spent_V
     , CASE WHEN tbl_spent.spent_V is not null
     	THEN (SUM(received.qtyIn) * cosmetics.volume - tbl_spent.spent_V) 

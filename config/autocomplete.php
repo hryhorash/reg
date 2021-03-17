@@ -79,7 +79,7 @@ if (isset($_GET['clientProfile'])) {
 if (isset($_REQUEST['supplierID'])) {
 	if ($_REQUEST['supplierID'] !='') $supplierID='supplier_brands.supplierID='.$_REQUEST['supplierID'];
 	else $supplierID=1;
-	$sql="SELECT cosmetics.id, cosmetics.RRP,
+	$sql="SELECT DISTINCT cosmetics.id, cosmetics.RRP, cosmetics.archive,
 			  CASE 
 				WHEN LENGTH(articul) THEN CONCAT(articul,', ', brands.name, ' ', cosmetics.name,', ',volume)
 				ELSE CONCAT(brands.name, ' ', cosmetics.name,', ',volume)
@@ -91,7 +91,7 @@ if (isset($_REQUEST['supplierID'])) {
  		  ORDER BY cosm_name";
 	include('autocomplete-pdo.php');
 	while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-		$reply['suggestions'][]=array('value' => $row['cosm_name'], 'data' => $row["id"] . '--' . $row['RRP']);
+		$reply['suggestions'][]=array('value' => $row['cosm_name'], 'data' => $row["id"] . '--' . $row['RRP'] . '--' . $row['archive']);
 	}
 }
 

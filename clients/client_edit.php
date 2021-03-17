@@ -80,14 +80,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	session_write_close();
 	
-	if ($_POST['goto'] =='profile') {
-		header( 'Location: /clients/client_profile.php?id='.$_POST["id"]);
+	switch($_POST['goto']) {
+		case 'profile':
+			header( 'Location: /clients/client_profile.php?id='.$_POST["id"]);
+			break;
+		case 'clientTree':
+			header( 'Location: /reports/clientTree.php');
+			break;
+		case 'visitDetails':
+			header( 'Location: /visits/visit_details.php?id='.$_GET['visitID'].'&goto=dashboard');
+			break;
+		default:
+			header( 'Location: /clients/client_list.php');
+			break;
+	}
+	exit;
+
+	/* if ($_POST['goto'] =='profile') {
+		
 		exit;
 	} else {
 		header( 'Location: /clients/client_list.php');
 		exit;
 
-	}
+	} */
 }
 
 

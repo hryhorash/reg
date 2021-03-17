@@ -2,6 +2,10 @@
 $access = 2;
 include($_SERVER['DOCUMENT_ROOT'].'/config/config.php');
 
+
+if($_SESSION['openFrom'] <10) $openFrom_2digit = '0'.$_SESSION['openFrom'];
+else $openFrom_2digit = $_SESSION['openFrom'];
+
 $_SESSION['gridToFill_start'] = array(
 	1 => array(),
 	2 => array(),
@@ -28,8 +32,8 @@ if($_GET['date'] !='')	{
 	
 }
 
-if ($_SESSION['pwr'] < 10)		$staff_cond = 'users.id =' . $_SESSION['userID'];
-else if($_GET['staffID'] > 0)	$staff_cond = 'users.id =' . $_GET['staffID'];
+if ($_SESSION['pwr'] < 10)		$staff_cond = 'visits_staff.userID =' . $_SESSION['userID'];
+else if($_GET['staffID'] > 0)	$staff_cond = 'visits_staff.userID =' . $_GET['staffID'];
 else 							$staff_cond = 1;
 
 if (isset($_SESSION['locationSelected'])) {
@@ -37,57 +41,28 @@ if (isset($_SESSION['locationSelected'])) {
 	$this_loc_off_weekdays = array();
 	$this_loc_off_weekdays = loc_off_weekdays();
 	
-	
-	if($_GET['date'] !='') $cond_date = 'visits.date = "' . $_GET['date'] . '"';
-	else $cond_date = 1;
-	
-	if($_SESSION['pwr'] < 10 ) {
-		$sql = "SELECT visits.id, visits.date, startTime, endTime, visits.state
-			    , GROUP_CONCAT(DISTINCT CONCAT(users.name, ' ', users.surname) SEPARATOR '<br/>') as staff
-                , clients.id as clientID, clients.name as clientName, clients.surname as clientSurname, clients.prompt
-                , tbl_staff.price_total, tbl_staff.works
-            FROM `visits`
-			LEFT JOIN visits_staff ON visits.id = visits_staff.visitID
-			LEFT JOIN users ON visits_staff.userID = users.id
-			LEFT JOIN clients ON visits.clientID = clients.id
-			LEFT JOIN (
-                SELECT visitID, SUM(visits_works.price) as price_total, GROUP_CONCAT(DISTINCT category SEPARATOR ', ') as works
-                FROM visits_works
-                INNER JOIN worktypes ON visits_works.workID = worktypes.id
-                INNER JOIN worktype_cat ON worktypes.catID = worktype_cat.id
-                WHERE visits_works.userID = :userID
-                GROUP BY visitID
-            ) tbl_staff ON visits.id = tbl_staff.visitID
-			WHERE visits.locationID = :locationID
-				AND YEARWEEK(visits.date,1) = YEARWEEK($set_date,1)
-				AND state != 8
-                AND users.id = :userID
-			GROUP BY visits.id
-			ORDER BY visits.date ASC, startTime ASC";
-	} else {
-		$sql = "SELECT visits.id, visits.date, startTime, endTime, visits.state, price_total
-			    , GROUP_CONCAT(DISTINCT CONCAT(users.name, ' ', users.surname) SEPARATOR '<br/>') as staff
-                , clients.id as clientID, clients.name as clientName, clients.surname as clientSurname, clients.prompt
-            FROM `visits`
-			LEFT JOIN visits_staff ON visits.id = visits_staff.visitID
-			LEFT JOIN users ON visits_staff.userID = users.id
-			LEFT JOIN clients ON visits.clientID = clients.id
-			WHERE visits.locationID = :locationID
-				AND YEARWEEK(visits.date,1) = YEARWEEK($set_date,1)
-				AND state != 8
-				AND $staff_cond
-			GROUP BY visits.id
-			ORDER BY visits.date ASC, startTime ASC";
-	}
-	$stmt = $pdo->prepare($sql);
+	$sql = "SELECT visits.id, visits.date, startTime, endTime, visits.state, price_total
+			, GROUP_CONCAT(DISTINCT CONCAT(users.name, ' ', users.surname) SEPARATOR '<br/>') as staff
+			, clients.id as clientID, clients.name as clientName, clients.surname as clientSurname, clients.prompt
+		    , GROUP_CONCAT(DISTINCT worktypes.name) as works
+		FROM `visits`
+		LEFT JOIN visits_staff ON visits.id = visits_staff.visitID
+		LEFT JOIN users ON visits_staff.userID = users.id
+		LEFT JOIN clients ON visits.clientID = clients.id
+		LEFT JOIN visits_works ON visits.id = visits_works.visitID
+        LEFT JOIN worktypes ON visits_works.workID = worktypes.id
+		WHERE visits.locationID = :locationID
+			AND YEARWEEK(visits.date,1) = YEARWEEK($set_date,1)
+			AND state != 8
+			AND $staff_cond
+		GROUP BY visits.id
+		ORDER BY visits.date ASC, startTime ASC";
+
 	try 
 	{
 		$stmt = $pdo->prepare($sql);
 		$stmt -> bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
-		if($_SESSION['pwr'] < 10 ) {
-			$stmt -> bindValue(':userID', $_SESSION['userID'], PDO::PARAM_INT);
-		}		
-		$stmt ->execute();
+		$stmt -> execute();
 		$count=1;
 		while ($data[$count] = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$visits_days_numbers[] = date('w', strtotime($data[$count]['date']));  // 0 = вс.
@@ -152,27 +127,36 @@ echo '<section class="content">';
 			foreach($weekdays as $day) {
 				if (!in_array($i, $this_loc_off_weekdays) || in_array($i, $new_array_unique)) {
 					echo '<div class="day">
-						<div class="grid-cell grid-header">';
+						<div class="grid-cell grid-header">
+							<p class="center bold">'. correctDate($day,1) .'<br>'.dayOfWeek($i).'</p>';
+
 							// ДЛЯ ОТОБРАЖЕНИЯ ВИЗИТОВ ВНЕ РАМОК ОТОБРАЖАЕМОГО РАСПИСАНИЯ
 							echo'<i class="fas fa-exclamation-triangle fa-2x" style="color:orange;position:absolute;top:5px;right:0;display:none;"></i>
 							<div class="todo" style="display:none;">';
 								$count = 1;
 								while($data[$count] != null) {
-									//начало и конец раньше времени открытия салона
-									if($data[$count]['date'] == $day 
-										&& mb_substr($data[$count]['startTime'],0,2) < $_SESSION['openFrom'] 
-										&& mb_substr($data[$count]['endTime'],0,2) <= $_SESSION['openFrom']) {
-										
-										if($_SESSION['pwr'] > 9)
-											echo '<p>
-												<a href="/visits/visit_details.php?id='.$data[$count]['id'].'&goto=dashboard">' . FIO($data[$count]['clientName'],$data[$count]['clientSurname'],$data[$count]['prompt']) . '</a></p>';
-										else echo FIO($data[$count]['clientName'],$data[$count]['clientSurname']) . ': ' . $data[$count]['works'] . '</p>';
-										
-									}
+									//записи вне рабочего времени салона
+									if($data[$count]['date'] == $day) {
+										switch(true) {
+											case(mb_substr($data[$count]['endTime'],0,2) < $_SESSION['openFrom'] ||
+												 $data[$count]['endTime'] == $openFrom_2digit.':00'):
+
+											//case($data[$count]['endTime'] == $openFrom_2digit.':00'):	 
+											
+											case(mb_substr($data[$count]['startTime'],0,2) >= $_SESSION['openTill']):
+
+												echo '<p>';
+													if($_SESSION['pwr'] > 9)
+														 echo '<a href="/visits/visit_details.php?id='.$data[$count]['id'].'&goto=dashboard">' . FIO($data[$count]['clientName'],$data[$count]['clientSurname'],$data[$count]['prompt']) . '</a>';
+													else echo FIO($data[$count]['clientName'],$data[$count]['clientSurname']) . ': ' . $data[$count]['works'];
+												echo '</p>';
+												break;
+										}
+												
+									} 
 									$count++;
 								}
 							echo'</div>
-							<p class="center bold">'. correctDate($day,1) .'<br>'.dayOfWeek($i).'</p>
 						</div>';
 						
 						if($day == date('Y-m-d')) {
@@ -181,120 +165,123 @@ echo '<section class="content">';
 						
 						$count = 1;
 						while($data[$count] != null) {
-							// конец визита совпадает или позже даты открытия салона (или в полночь)
-							if($data[$count]['date'] == $day
-								&& (mb_substr($data[$count]['endTime'],0,2) > $_SESSION['openFrom'] 
-								|| (
-									mb_substr($data[$count]['startTime'],0,2) > $_SESSION['openFrom'] 
-									&& $data[$count]['endTime'] == '00:00'
-									)
-								)
-							  ) {
-							
-								event_grid_visit($data[$count], $i);
+							// записи в рабочее время салона
+							if($data[$count]['date'] == $day) {
+								switch(true) {
+									case(mb_substr($data[$count]['startTime'],0,2) == $_SESSION['openFrom'] && 
+										 mb_substr($data[$count]['endTime'],0,2) == $_SESSION['openFrom']):
+
+										case(mb_substr($data[$count]['startTime'],0,2) < $_SESSION['openFrom'] && 
+											mb_substr($data[$count]['endTime'],0,2) >= $_SESSION['openFrom']):
+										
+										case(mb_substr($data[$count]['startTime'],0,2) >= $_SESSION['openFrom'] &&
+											mb_substr($data[$count]['startTime'],0,2) < $_SESSION['openTill']):
+											
+											event_grid_visit($data[$count], $i);
+											break;		
+								}
 							}
 							
 							$count++;
 						}
 					
-					
-					//ЗАПОЛНЯЕМ ПУСТОТЫ
-					$start = $_SESSION['gridToFill_start'][$i];
-					$fin = $_SESSION['gridToFill_finish'][$i];
-					
-					
-					
-					if(count($_SESSION['gridToFill_start'][$i]) > 0) {
-						$max_fin[$i] = max($_SESSION['gridToFill_finish'][$i]);
-					} else $max_fin[$i] = $_SESSION['gridToFill_finish'][$i][0];
-					
-					switch (true)
-					{
-						//пустой день или выходной
-						case($_SESSION['gridToFill_start'][$i] == null):
-							empty_cal_day($day);
-							break;
+						//ЗАПОЛНЯЕМ ПУСТОТЫ
+						$start = $_SESSION['gridToFill_start'][$i];
+						$fin = $_SESSION['gridToFill_finish'][$i];
 						
-						//пустоты до первой записи
-						case($_SESSION['gridToFill_start'][$i][0] > 2):
-							if($_SESSION['gridToFill_start'][$i][0] <= 6 ) {
-								cal_emptyCell_taken_gap(2,$_SESSION['gridToFill_start'][$i][0]);
-							} else {
-								$begin = 2; //начало второй строки + № конца планируемого блока
-								$visitStart = $_SESSION['gridToFill_start'][$i][0] - 4;
-								
-								cal_emptyCell_taken_gap($visitStart, $_SESSION['gridToFill_start'][$i][0]);
-								
-								
-								while($begin <= $visitStart && ($visitStart - $begin) >=2) {
-									cal_emptyCell_wLink($begin, $day);
-									$begin = $begin+2;
-								}
-								
-							}
+						
+						
+						if(count($_SESSION['gridToFill_start'][$i]) > 0) {
+							$max_fin[$i] = max($_SESSION['gridToFill_finish'][$i]);
+						} else $max_fin[$i] = $_SESSION['gridToFill_finish'][$i][0];
+						
+						switch (true)
+						{
+							//пустой день или выходной
+							case($_SESSION['gridToFill_start'][$i] == null):
+								empty_cal_day($day);
+								break;
 							
-							
-						// пустоты МЕЖДУ записями
-						case(count($_SESSION['gridToFill_start'][$i]) > 0):
-							$start_array = $_SESSION['gridToFill_start'][$i];
-							unset($start_array[0]); //удаляем старт первой записи
-							
-							
-							$c = 1;
-							foreach($start_array as $visitStart) {
-								$prev_visitEnd = $_SESSION['gridToFill_finish'][$i][($c-1)];
-								$gap = $visitStart - $prev_visitEnd;
-								if($gap > 0) {
-									if($gap <= 8) {
-										cal_emptyCell_taken_gap($prev_visitEnd, $visitStart);
-									} else {
-										cal_emptyCell_taken_gap($prev_visitEnd, ($prev_visitEnd + 4));
-										cal_emptyCell_taken_gap(($visitStart-4), $visitStart);
-									}
+							//пустоты до первой записи
+							case($_SESSION['gridToFill_start'][$i][0] > 2):
+								if($_SESSION['gridToFill_start'][$i][0] <= 6 ) {
+									cal_emptyCell_taken_gap(2,$_SESSION['gridToFill_start'][$i][0]);
+								} else {
+									$begin = 2; //начало второй строки + № конца планируемого блока
+									$visitStart = $_SESSION['gridToFill_start'][$i][0] - 4;
 									
-									$begin = $prev_visitEnd + 4; 
-										
+									cal_emptyCell_taken_gap($visitStart, $_SESSION['gridToFill_start'][$i][0]);
 									
-									if(($begin % 2) != 0 && $begin <= ($visitStart-4)) { // если начало нечетное
-										echo '<div class="grid-cell" style="grid-row: '.$begin.'/'.($begin+1).';"><b></b></div>';
-										$begin = $begin+1;
-									} 
 									
-									while($begin <= ($visitStart-4) && ($visitStart-4-$begin) >= 2) {
+									while($begin <= $visitStart && ($visitStart - $begin) >=2) {
 										cal_emptyCell_wLink($begin, $day);
 										$begin = $begin+2;
 									}
-								}
-								$c++;
-							}
-							
-							
-						//пустоты после последней записи
-						case(max($_SESSION['gridToFill_finish'][$i]) < $_SESSION['grid_rows']):
-							$fin_gap = $_SESSION['grid_rows'] - max($_SESSION['gridToFill_finish'][$i]);
-						
-							if($fin_gap <= 4 ) {
-								cal_emptyCell_taken_gap(max($_SESSION['gridToFill_finish'][$i]), ($_SESSION['grid_rows']+2));
-							} else {
-								$begin = $max_fin[$i]; 
-								cal_emptyCell_taken_gap($begin, ($begin+4));
-								
-								$begin = $begin + 4;
-								
-								if(($begin % 2) != 0) { // если начало нечетное
-									echo '<div class="grid-cell gray-bg" style="grid-row: '.$begin.'/'.($begin+1).';;border:none;"><b></b></div>';
-									$begin = $begin+1;
-								} 
-								
-								while($begin <= $_SESSION['grid_rows']) {
-									cal_emptyCell_wLink($begin, $day);
-									$begin = $begin+2;
+									
 								}
 								
-							}
-						break;
-					}
-					//конец пустот
+								
+							// пустоты МЕЖДУ записями
+							case(count($_SESSION['gridToFill_start'][$i]) > 1):
+								$start_array = $_SESSION['gridToFill_start'][$i];
+								unset($start_array[0]); //удаляем старт первой записи
+								
+								
+								$c = 1;
+								foreach($start_array as $visitStart) {
+									$prev_visitEnd = $_SESSION['gridToFill_finish'][$i][($c-1)];
+									$gap = $visitStart - $prev_visitEnd;
+									if($gap > 0) {
+										if($gap <= 8) {
+											cal_emptyCell_taken_gap($prev_visitEnd, $visitStart);
+										} else {
+											cal_emptyCell_taken_gap($prev_visitEnd, ($prev_visitEnd + 4));
+											cal_emptyCell_taken_gap(($visitStart-4), $visitStart);
+										}
+										
+										$begin = $prev_visitEnd + 4; 
+											
+										
+										if(($begin % 2) != 0 && $begin <= ($visitStart-4)) { // если начало нечетное
+											echo '<div class="grid-cell" style="grid-row: '.$begin.'/'.($begin+1).';"><b></b></div>';
+											$begin = $begin+1;
+										} 
+										
+										while($begin <= ($visitStart-4) && ($visitStart-4-$begin) >= 2) {
+											cal_emptyCell_wLink($begin, $day);
+											$begin = $begin+2;
+										}
+									}
+									$c++;
+								}
+								
+								
+							//пустоты после последней записи
+							case($max_fin[$i] < $_SESSION['grid_rows']):
+								$fin_gap = $_SESSION['grid_rows'] - $max_fin[$i];
+							
+								if($fin_gap <= 4 ) {
+									cal_emptyCell_taken_gap($max_fin[$i], ($_SESSION['grid_rows']+2));
+								} else {
+									$begin = $max_fin[$i]; 
+									cal_emptyCell_taken_gap($begin, ($begin+4));
+									
+									$begin = $begin + 4;
+									
+									if(($begin % 2) != 0) { // если начало нечетное
+										echo '<div class="grid-cell gray-bg" style="grid-row: '.$begin.'/'.($begin+1).';border:none;"><b></b></div>';
+										$begin = $begin+1;
+									} 
+									
+									while($begin <= $_SESSION['grid_rows']) {
+										cal_emptyCell_wLink($begin, $day);
+										$begin = $begin+2;
+									}
+									
+								}
+							break;
+						}
+						//конец пустот
 					
 					
 					echo '</div>';
@@ -333,15 +320,23 @@ if (isset($_SESSION['locationSelected'])) {?>
 			var isEmpty = $(this).children().length;
 			if(isEmpty > 0) {
 				$(this).siblings().show();
+				
 			}
 		});
 		
 		$(".fa-exclamation-triangle").on('click', function() {
-			$(this).siblings('.todo').toggle();
+			let elem = $(this).siblings('.todo');
+			elem.toggle();
+			elem.toggleClass('tri-active');
+
+			if (elem.hasClass("tri-active")) {
+				elem.parent().css("overflow","visible");
+			}
+			else { 
+				elem.parent().css("overflow","hidden");
+			}
 		});
-		
-		
-		
+
 		function approve() {
 			var el = $(this);
 			var visitID = $(this).prop('id');

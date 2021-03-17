@@ -72,11 +72,11 @@ echo '<section class="content">';
 		<table class='stripy table-autosort table-autofilter'>
 			<thead>
 				<tr>
-					<th style="width: 5%;">№			</th>
+					<th style='width: max-content;'>№</th>
 					<th class="table-sortable:*"><?=lang::NAME;?></th>
 					<th class="mobile-hide table-sortable:*"><?=lang::HDR_RECOMMENDATION;?></th>
 					<th class="mobile-hide" style="width:30%;"><?=lang::HDR_COMMENT;?></th>
-					<th style="width: 90px;"><?php echo lang::HDR_HANDLING;?></th>
+					<th style='width: max-content;'><?php echo lang::HDR_HANDLING;?></th>
 				</tr>
 			</thead>
 			<tbody>	

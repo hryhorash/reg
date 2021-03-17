@@ -3,7 +3,7 @@ session_start();
 include($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
 
 // Подгружаем базовые настройки
-$q = $pdo->prepare("SELECT name, country, currency, logoURL,defaultLang FROM settings LIMIT 1");
+$q = $pdo->prepare("SELECT `name`, `country`, `currency`, `logoURL`, `defaultLang` FROM `settings` LIMIT 1");
 $q ->execute();
 $_SESSION['settings'] = $q->fetch(PDO::FETCH_ASSOC);
 
@@ -25,7 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		function post_captcha($user_response) {
 			$fields_string = '';
 			$fields = array(
-				'secret' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe', // Тестовый
+				'secret' => '6LfoV8cZAAAAACaAkOcUzoNJ_5wuOPMUgGP79CwT',  // РАБОЧИЙ
+				//'secret' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe', // Тестовый
 				'response' => $user_response
 			);
 			foreach($fields as $key=>$value)
@@ -69,19 +70,20 @@ echo '<section class="content flex">';
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 	<form name="auth" method="post">  
-		<fieldset name="auth" class="autoMargin">
+		<fieldset name="auth" class="autoMargin padding">
 		<h2><?php echo lang::HDR_LOGIN;?></h2>  
 
-		<div class="column">	
-			<input type="text" name="username" required placeholder="<?php echo lang::USERNAME; ?>" autofocus />
-			<input type="password" name="pass" required placeholder="<?php echo lang::PASS; ?>" />
-			
+			<div class="row">
+				<input type="text" name="username" required placeholder="<?php echo lang::USERNAME; ?>" autofocus />
+				<input type="password" name="pass" required placeholder="<?php echo lang::PASS; ?>" />
+			</div>
+
 			<?php 
 			if(isset($_GET["goto"])) echo '<input name="goto" type="hidden" value="'. $_GET["goto"] .'">';
 			if($_SESSION['attempt'] > 3 ) {
-			echo '<div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>'; // ТЕСТОВЫЙ
+			echo '<div class="g-recaptcha" data-sitekey="6LfoV8cZAAAAAOnACO5FLFkHbRJ6rilvG3uJYxZE"></div>'; // РАБОЧИЙ
+			//echo '<div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>'; // ТЕСТОВЫЙ
 		} ?>
-		</div>	
 		<div class="inline" style="line-height: 1.5em;">
 			<input type="submit" name="login" style="flex:0.5;" value="<?php echo lang::BTN_ENTER;?>" />  
 			

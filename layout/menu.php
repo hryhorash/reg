@@ -19,7 +19,9 @@
 		else { ?>
 		
 	<ul class="nav-links">
-		<li><a href="/clients/client_list.php"><i class="fas fa-address-book"></i><?=lang::MENU_CLIENTS;?></a></li>
+		<?php if ($_SESSION["pwr"] > 9) { ?>
+			<li><a href="/clients/client_list.php"><i class="fas fa-address-book"></i><?=lang::MENU_CLIENTS;?></a></li>
+		<?php } ?>
 		<!--li><a href="/visits/visits_list.php"><i class="fas fa-clipboard-check"></i><!--?=lang::MENU_VISITS;?></a></li-->		
 		
 		<!--li onclick="menuExpand(3);"><i class="fas fa-tags"></i><!--?=lang::MENU_PRICELIST;?></li>
@@ -31,9 +33,14 @@
 			
 		
 		<li><a href="/cosmetics/cosmetics_list.php"><i class="fas fa-star"></i><?=lang::MENU_COSMETICS;?></a></li>
+
+		<?php if ($_SESSION["pwr"] < 10) { ?>
+			<li><a href="/reports/wages.php"><i class="fas fa-coins"></i><?=lang::HDR_WAGE;?></a></li>
+		<?php } ?>	
 		
-		<li><a href="/expences/expencesList.php/"><i class="fas fa-coins"></i><?=lang::MENU_EXPENCES;?></a></li>
-				
+		<?php if ($_SESSION["pwr"] > 9) { ?>
+			<li><a href="/expences/expencesList.php/"><i class="fas fa-coins"></i><?=lang::MENU_EXPENCES;?></a></li>
+		<?php } ?>		
 		<!--li onclick="menuExpand(2);"><i class="fas fa-file-alt"></i><!--?=lang::MENU_REPORTS;?></li>
 		<div class="drop-down" id='2'>
 			<li><a href="#">Косметика в работу</a></li>
@@ -41,25 +48,25 @@
 		</div-->
 		
 		
-			<li class="flex" onclick="menuExpand(4);"><i class="fas fa-chart-line"></i><?=lang::MENU_ANALYTICS;?></li>
-			<div class="drop-down" id='4'>
-				<?php if ($_SESSION["pwr"] > 89) { ?>
-			
+			<?php if ($_SESSION["pwr"] > 89) { ?>
+				<li class="flex" onclick="menuExpand(4);"><i class="fas fa-chart-line"></i><?=lang::MENU_ANALYTICS;?></li>
+				<div class="drop-down" id='4'>
 					<li><a href="/reports/finance_main.php/"><?=lang::H2_FINANCE_REPORT;?></a></li>
 					<li><a href="/reports/client_value.php/"><?=lang::MENU_CLIENT_VALUE;?></a></li>
-			
-				<?php } 
-			echo '</div>';
-		if ($_SESSION["role"] != 'basic') { ?>
+				</div>
+			<?php } 
+		if ($_SESSION["pwr"] > 9) { ?>
 			
 			<li class="flex" onclick="menuExpand(5);"><i class="fas fa-cogs"></i><?=lang::MENU_SETTINGS;?></li>
 			<div class="drop-down" id='5'>
 				
 				<?php if ($_SESSION["pwr"] > 89) { 
 					echo '<li><a href="/locations/list.php">'. lang::MENU_LOCATIONS .'</a></li>';
-				} else {
+				} 
 					echo '<li><a href="/locations/location_daysOff.php">'. lang::MENU_LOCATION_DAYS_OFF.'</a></li>';
-				}?>
+					echo '<li><a href="/reports/expences_works_match.php">'. lang::H2_EXPENCES_WORKS_MATCH.'</a></li>';
+					
+				?>
 				
 				<li><a href="/user/userList.php"><?=lang::MENU_USERS;?></a></li>
 			</div>
