@@ -351,3 +351,9 @@ MigrationBackup/
 .htaccess
 user/newpass - копия.php
 config/connect.php
+.vscode/settings.json
+config/connect.php
+mail-wh-test.php
+mail-wh.php
+mail-wh1.php
+config/connect.php

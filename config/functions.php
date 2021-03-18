@@ -1604,12 +1604,15 @@ function cal_emptyCell_wLink($gridRowFrom, $date, $site=null) {
 	if($site != null) {
 			$url = '/site/visit.php?lang='. $_SESSION['lang'];
 			$plusSign = '<p class="center" style="font-weight: bold;padding: 0;color: white;">+</p>';
+			$emptyCell = '<div class="grid-cell" style="grid-row: '.$gridRowFrom.'/'.($gridRowFrom+2).';grid-column:1 / 10;" title="'.$timeFrom.'"><a href="'.$url.'&date='.$date.'&timeFrom='.$timeFrom.'" class="fill-div">'.$plusSign.'</a></div>';
+	
 	} else	{
 		$url = '/visits/visit_details.php?new';
 		$plusSign = '<i class="fas fa-plus center"></i>';
+		$emptyCell = '<div class="grid-cell" style="grid-row: '.$gridRowFrom.'/'.($gridRowFrom+2).';grid-column:1 / 10;" title="'.$timeFrom.'"><a href="'.$url.'&date='.$date.'&timeFrom='.$timeFrom.'&goto=dashboard" class="fill-div">'.$plusSign.'</a></div>';
+	
 	}
 	
-	$emptyCell = '<div class="grid-cell" style="grid-row: '.$gridRowFrom.'/'.($gridRowFrom+2).';grid-column:1 / 10;" title="'.$timeFrom.'"><a href="'.$url.'&date='.$date.'&timeFrom='.$timeFrom.'&goto=dashboard" class="fill-div">'.$plusSign.'</a></div>';
 	$emptynoLink = '<div class="grid-cell" style="grid-row: '.$gridRowFrom.'/'.($gridRowFrom+2).';grid-column:1 / 10; background-color:white;" title="'.$timeFrom.'"></div>';
 	//скрываем пустое время для сайта, если оно "сегодня" и уже в прошлом
 	if(date('Y-m-d') == $date && $site != null) {
@@ -1637,8 +1640,8 @@ function cal_emptyCell_wLink($gridRowFrom, $date, $site=null) {
 		}	
 		
 	} else 	{
-		if($_SESSION['pwr'] >= 10) echo $emptyCell;	
-		else echo $emptynoLink;
+		if($_SESSION['pwr'] > 1 && $_SESSION['pwr'] < 10) echo $emptynoLink;	
+		else echo $emptyCell;
 	}
 }
 
