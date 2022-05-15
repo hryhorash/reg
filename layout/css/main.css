@@ -450,7 +450,8 @@ a.inside-input {
 }
 
 .input-hdr,
-input:read-only {
+/*input:read-only:not([type=submit])*/
+input[read-only]  {
   background-color: transparent !important;
   border: none;
   padding: 6px;
@@ -883,6 +884,10 @@ p.cal-price {
   width: 100%;
 }
 
+.gray-link a:hover {
+  background: var(--clr-accent);
+}
+
 .accent-bg {
   background: var(--clr-accent);
   color: white;
@@ -891,6 +896,9 @@ p.cal-price {
 .accent-bg a,
 .accent-bg a:hover {
   color: white;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .accent-bg p.cal-price,
@@ -1048,7 +1056,6 @@ summary:focus {
     border-right: none;
     font-size: smaller;
   }
-
   .grid-cell p {
     margin: 0;
     padding: var(--border-radius);

@@ -15,8 +15,6 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/config/lang_select.php');
 
 $res = '';
 
-
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			
 	if(!isset($_POST['g-recaptcha-response']) && isset($_POST["login"])) {
@@ -79,11 +77,18 @@ echo '<section class="content flex">';
 			</div>
 
 			<?php 
-			if(isset($_GET["goto"])) echo '<input name="goto" type="hidden" value="'. $_GET["goto"] .'">';
+			switch (true) {
+				case (isset($_GET["fwd"]) && isset($_GET["goto"])):	
+					echo '<input name="fwd" type="hidden" value="'. $_GET["fwd"] .'&goto='.$_GET["goto"] .'">';
+					break;
+				case (isset($_GET["fwd"])):
+					echo '<input name="fwd" type="hidden" value="'. $_GET["fwd"] .'">';
+					break;
+			}
 			if($_SESSION['attempt'] > 3 ) {
 			echo '<div class="g-recaptcha" data-sitekey="6LfoV8cZAAAAAOnACO5FLFkHbRJ6rilvG3uJYxZE"></div>'; // РАБОЧИЙ
 			//echo '<div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>'; // ТЕСТОВЫЙ
-		} ?>
+			} ?>
 		<div class="inline" style="line-height: 1.5em;">
 			<input type="submit" name="login" style="flex:0.5;" value="<?php echo lang::BTN_ENTER;?>" />  
 			

@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if($_GET['id'] !=''){
 	try {
-		$stmt = $pdo->prepare("SELECT c.name, c.surname, c.prompt, c.refClientID, c.phones, c.email, c.DOB, c.gender, c.note, c.sourceID, c.locationID, c1.name as refName, c1.surname as refSurame, c1.prompt as refPrompt
+		$stmt = $pdo->prepare("SELECT c.name, c.surname, c.prompt, c.refClientID, c.phones, c.email, c.DOB, c.gender, c.note, c.sourceID, c.locationID, c1.name as refName, c1.surname as refSurname, c1.prompt as refPrompt
 		FROM `clients` c 
 		LEFT JOIN clients c1 ON c.refClientID = c1.id
 		WHERE c.id=:id");
@@ -188,7 +188,7 @@ echo '<section class="content">';
 			<div class="row col-2" id="refClient" 
 			<?php if($data['refClientID'] ==0) echo 'style="display:none;"';?> >
 				<label for="refClient"><?php echo lang::HDR_RECOMMENDATION; ?>:</label>
-				<input name="refClient" class="FIO" type="text" value="<?php FIO($data['refName'],$data['refSurame'],$data['refPrompt']); ?>" />
+				<input name="refClient" class="FIO" type="text" value="<?=FIO($data['refName'],$data['refSurname'],$data['refPrompt']); ?>" />
 				<input name="clientID" type="hidden" value="<?php echo $data['refClientID']; ?>" />
 			</div>
 			

@@ -6,36 +6,97 @@ include('tabs.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
-	$_SESSION['temp'] = array(
-		'category' 		=> $_POST['category'],
-		'subcatID' 		=> $_POST['subcatID'],
-		'loc' 			=> $_POST['loc'],
-		'date' 			=> $_POST['date'],
-		'item'			=> $_POST['item'],
-		'price' 		=> $_POST['price'],
-		'comment' 		=> $_POST['comment']
-	);
+	//var_dump($_POST);exit;
+
+	$check = "SELECT expences_works.id, expences_works.worktypeCatID as selected
+			FROM `worktype_cat` 
+			LEFT JOIN expences_works ON expences_works.worktypeCatID = worktype_cat.id
+			WHERE expences_works.expencesCatID=:expencesCatID
+			ORDER BY category";
 	
 	
-	$sql = "INSERT INTO expences (date, locationID, subcatID, item, price, comment, author)
-	VALUES (:date, :locationID, :subcatID, :item, :price, :comment, :author)";
+	$sql = "INSERT INTO expences_works (expencesCatID, worktypeCatID)
+	VALUES (:expencesCatID, :worktypeCatID)";
 	
 	
 	try {
+
+		// проверяем уже сохраненные значения
+		$read = $pdo->prepare($check);
+		$read->bindValue(':expencesCatID', $_POST["category"], PDO::PARAM_INT); 
+		$read->execute();
+
+		while($row = $read->fetch()) {
+			$prev[$row['id']] = $row['selected'];
+		} 
+		
+		//var_dump($prev);exit;
 		$stmt = $pdo->prepare($sql);
-		$stmt->bindValue(':date', $_POST["date"], PDO::PARAM_STR); 
-		$stmt->bindValue(':locationID', $_POST['loc'], PDO::PARAM_INT); 
-		$stmt->bindValue(':subcatID', $_POST["subcatID"], PDO::PARAM_INT); 
-		$stmt->bindValue(':item', $_POST["item"], PDO::PARAM_STR); 
-		$stmt->bindValue(':price', $_POST["price"], PDO::PARAM_STR); 
-		$stmt->bindValue(':comment', $_POST["comment"], PDO::PARAM_STR); 
-		$stmt->bindValue(':author', $_SESSION["userID"], PDO::PARAM_INT); 
-		$stmt->execute();
+		$stmt->bindValue(':expencesCatID', $_POST["category"], PDO::PARAM_INT); 
+		$stmt->bindParam(':worktypeCatID', $worktypeCatID, PDO::PARAM_INT); 
+		
+
+		function delete($id) {
+			require($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
+			$delete = $pdo->prepare("
+								DELETE FROM expences_works WHERE id = :id
+							");
+			$delete -> bindValue(':id', $id, PDO::PARAM_INT);
+			$delete -> execute();
+		}
+		if($prev != null){  //были галки, установленные ранее
+			
+			// удаляем данные, если галку отжали
+			switch(true) {
+				case ($_POST["specialty"] == null):
+					foreach($prev as $key => $item) {
+						delete($key);
+					}
+					break;
+
+				case ($_POST["specialty"] > 0):
+					foreach($prev as $key => $item) {
+						if($item != $_POST["specialty"]) delete($key);
+					}
+
+					foreach($_POST["specialty"] as $worktypeCatID) {
+						if (!in_array($_POST["specialty"], $prev)) {
+							$stmt->execute();
+						}
+					}
+					break;
+
+				default:
+					foreach($prev as $key => $item) {
+						if (!in_array($item, $_POST["specialty"])) {
+							delete($key);
+						}
+					}
+					
+					foreach($_POST["specialty"] as $worktypeCatID) {
+						if (!in_array($worktypeCatID, $prev)) {
+							$stmt->execute();
+						}
+					}
+
+			}
+			
+
+		} else { // галки устанавливаются впервые
+			if($_POST["specialty"] != null) {
+				foreach($_POST["specialty"] as $worktypeCatID) {
+					$stmt->execute();
+				}
+			}
+			
+		}
+		
+		
+		
 		$_SESSION['success'] = lang::SUCCESS_GENERAL_ADD;
-		unset($_SESSION['temp']);
 		session_write_close();
-		header( 'Location: /expences/expencesList.php');
-		exit;
+		//header( 'Location: /expences/expencesList.php');
+		//exit;
 		
 	} catch (PDOException $ex){
 		include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');
@@ -44,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $pdo = NULL;
-$title = lang::MENU_EXPENCES_ADD;
+$title = lang::H2_EXPENCES_WORKS_MATCH;
 //----------------------------VIEW-------------------------------
 include($_SERVER['DOCUMENT_ROOT'].'/layout/head.php'); 
 echo '<section class="sidebar">';
@@ -64,7 +125,7 @@ echo '<section class="content">';
 						<?=cat_list(1,$_SESSION['temp']['category']); ?>
 					</select>
 				</div>
-				<div class="row">
+				<div class="row" id="ajax">
 				
 					<label for="catID"><?=lang::HDR_WORKTYPE_CAT;?>*:</label>
 					<?=work_cat_select(1, $_SESSION['temp']['catID']);?>
@@ -76,11 +137,66 @@ echo '<section class="content">';
 		<input id="button" type="submit" value="<?=lang::BTN_ADD;?>" />
 		
 	</form>
+
+	<div id="test"></div>
 </section>
 
 
-<?php include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php');
-	include($_SERVER['DOCUMENT_ROOT'].'/expences/ajax_function.php');
-	unset($_SESSION['temp']);
- ?>
+<?php include($_SERVER['DOCUMENT_ROOT'].'/layout/footer.php'); ?>
 
+<script>
+//$("select[name='category']").change(function(){
+		
+	//При изначально установленном значении
+	/* var xhttp = new XMLHttpRequest();
+	$.ajax({
+		type: "GET",
+		url: "expences_works_match_ajax.php",
+		data:	{ "category": $("#category option:selected").val(), "subcategory":  $("#subcatID option:selected").val() },  
+		success: function(data){
+			alert(data);
+		  }
+	}); */
+	
+	
+	
+	// При изменении значения	
+	$("#category").change(function() {
+		var xhttp = new XMLHttpRequest();
+		$.ajax({
+			type: "GET",
+			url: "expences_works_match_ajax.php",
+			data:	{ "category": $("#category option:selected").val() },
+			success: function(data){
+
+				// очищаем галочки
+				$("input[name='specialty[]']").each(function() {
+					$(this).prop("checked", false);
+				});
+				
+				// устанавливаем галочки
+				data = JSON.parse(data);
+				if (jQuery.isEmptyObject(data) == false) {
+					
+					data.forEach(function(selectedWorkID){
+						$("input[name='specialty[]']").each(function() {
+							let curr = $(this).val();
+							
+
+							if (curr == selectedWorkID) {
+								$(this).prop("checked", true);
+								//alert('success');
+							}
+							
+						
+					
+						});
+
+
+					});
+				}
+			}
+		});
+	});
+//});
+</script>

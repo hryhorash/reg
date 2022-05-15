@@ -66,8 +66,8 @@ try {
 			$q ->execute();
 			$_SESSION['settings'] = $q->fetch(PDO::FETCH_ASSOC);
 			
-			if(isset($_POST['goto'])) {
-				header("location: " . $_POST['goto']);  
+			if(isset($_POST['fwd'])) {
+				header("location: " . $_POST['fwd']);  
 			} else {
 				header("location: /user/dashboard.php");  
 			}

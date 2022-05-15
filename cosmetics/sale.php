@@ -128,7 +128,7 @@ echo '<section class="content">';
 							<td class="small center">' . $count	. '</td>';
 							if ($brandID == 1) echo '<td>' . $data[$count]['brand']	. '</td>';
 							echo '<td class="mobile-hide">' . $data[$count]['articul']	. '</td>
-							<td><a href="sales_archive.php?cosmID='.$data[$count]['id'].'" title="'.lang::HDR_SALE_ARCHIVE.'"><strong>' . $data[$count]['name']	. '</strong>, ' . $data[$count]['volume']	. '</a><br />'
+							<td><a href="history.php?cosmID='.$data[$count]['id'].'" title="'.lang::HDR_SALE_ARCHIVE.'"><strong>' . $data[$count]['name']	. '</strong>, ' . $data[$count]['volume']	. '</a><br />'
 								  . $data[$count]['description'] . '</td>
 							<td class="center">' . $data[$count]['RRP'] . curr() .'</td>
 							<td class="center">' . $data[$count]['pcs_available'] .'</td>

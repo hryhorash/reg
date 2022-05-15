@@ -46,7 +46,7 @@ if($_REQUEST['cosmID'] != '') {
 		$purchases = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 		
 		//наличие и стоимость за грамм для косметики в работу
-		if($data['purpose'] == 0 || $data['purpuse'] == 2) {
+		if($data['purpose'] == 0 || $data['purpose'] == 2) {
 			$stmt3 = $pdo->prepare("SELECT cosmetics.id, brandID, brands.name as brand, cosmetics.name, articul, cosmetics.volume
 									, SUM(received.qtyIn) * cosmetics.volume as received_V
 									, MAX(received.priceIn / received.qtyIn) / cosmetics.volume as max_price_gr
@@ -127,7 +127,7 @@ echo '<section class="content grid-2x">';
 					<td class="center">' . correctNumber($data['min_price'],2) .' - '. correctNumber($data['max_price'],2)	. curr() . '</td>
 				</tr>
 				<tr>';
-					if($data['purpose'] == 0 || $data['purpuse'] == 2) {
+					if($data['purpose'] == 0 || $data['purpose'] == 2) {
 						echo '<td>'. lang::HDR_AVAILABILITY. ':<br/>' .lang::HDR_PCS . ' | ' . lang::HDR_GR.' | ' . lang::HDR_COST_PER_GR .'</td>
 							<td class="center">' . correctNumber($stock4work['pcs_available'],1) . ' | ' 
 												. correctNumber($stock4work['v_available'],0)   . ' | ' 

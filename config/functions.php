@@ -912,12 +912,16 @@ function VAT_only($number) {
 
 function supplier_select($selected=null){
 	require($_SERVER['DOCUMENT_ROOT'].'/config/connect.php');
-	$stmt = $pdo->prepare("SELECT id, name
-			FROM suppliers 
-			WHERE archive=0 ");
+	$stmt = $pdo->prepare("SELECT suppliers.id, suppliers.name, GROUP_CONCAT(brands.name SEPARATOR ', ') as brandNames
+			FROM suppliers
+            LEFT JOIN supplier_brands ON suppliers.id=supplier_brands.supplierID
+            LEFT JOIN brands ON supplier_brands.brandID=brands.id
+			WHERE suppliers.archive=0
+            GROUP BY suppliers.id
+             ");
 	$stmt->execute();
 	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-		$res[$row['id']]=$row['name'];
+		$res[$row['id']]=$row['name'].' (' . $row['brandNames'] .')';
 	}
 	echo '<label>'.lang::HDR_SUPPLIER.':*</label>
 	<select name="supplier" required>
@@ -1507,16 +1511,25 @@ function time_grid($site=null){
 function event_grid_visit($visitData, $weekday = null, $forSite = null) {
 	//$_SESSION['openTill'] для сайта тут уже уменьшена на час (см. time_grid())
 	
+	if($_SESSION['openFrom'] < 10)	$openTime = '0' . $_SESSION['openFrom'];
+	else $openTime = $_SESSION['openFrom'];
+
 	switch(true) {
 		case (mb_substr($visitData['startTime'],0,2) < $_SESSION['openFrom']
-		      && mb_substr($visitData['endTime'],0,2) >= $_SESSION['openFrom']):
+		      && mb_substr($visitData['endTime'],0,2) >= $_SESSION['openFrom']
+			  && $visitData['endTime'] != $openTime.':00'):
 			$visit_start = $_SESSION['openFrom'];
 			$visit_end	 = $visitData['endTime'];
 			$notice = '<i class="fas fa-exclamation-triangle attention" title="'.lang::TOOLTIP_VISIT_START . $visitData['startTime'] .'"></i>';
 			break;
+
+		case ($visitData['endTime'] == $openTime.':00'):
+			return;
+			break;
 			
-		case ((mb_substr($visitData['endTime'],0,2) >$_SESSION['openTill'] || $visitData['endTime'] == '00:00')
-				&& mb_substr($visitData['startTime'],0,2) >= $_SESSION['openFrom']):
+		case ((mb_substr($visitData['endTime'],0,2) >= $_SESSION['openTill'] || $visitData['endTime'] == '00:00')
+				&& mb_substr($visitData['startTime'],0,2) >= $_SESSION['openFrom']
+				&& $visitData['endTime'] != $_SESSION['openTill'].':00'):
 			$visit_start = $visitData['startTime'];
 			$visit_end	 = $_SESSION['openTill'];
 			$notice = '<i class="fas fa-exclamation-triangle attention" title="'.lang::TOOLTIP_VISIT_END . $visitData['endTime'] .'"></i>';
@@ -1527,7 +1540,7 @@ function event_grid_visit($visitData, $weekday = null, $forSite = null) {
 			$visit_end	 = $visitData['endTime'];
 			break;
 	}
-	
+
 	//для сайта: проверяем, не позже ли заканчивается визит по сравнению с временем, отображаемым на сайте
 	//if(mb_substr($visit_end,0,2) >= $openTill) $visit_end = $openTill . ':00';
 	
@@ -1535,36 +1548,44 @@ function event_grid_visit($visitData, $weekday = null, $forSite = null) {
 	$slots_number = event_duration_slots($visit_start, $visit_end);
 	$grid_end = $grid_start+$slots_number;
 	
-	if($grid_end > $_SESSION['grid_rows']) $grid_end = $_SESSION['grid_rows'];  // для сайта с укороченным графиком "до"
-	
-	if ($grid_start < $grid_end) { //для сайта с укороченным графиком "до"
+	if($forSite != null) {
+		if($grid_end > $_SESSION['grid_rows']) $grid_end = $_SESSION['grid_rows'];  // для сайта с укороченным графиком "до"
+		if ($grid_start < $grid_end) { //для сайта с укороченным графиком "до"
+			echo '<div class="grid-cell gray-bg" style="grid-row: '. $grid_start .'/'.$grid_end.';">
+				<p>'.lang::HDR_CALENDAR_TAKEN.'</p>';
+			echo '</div>';
+		}
+	} else {
 		echo '<div class="grid-cell'; 
 			if($weekday != null) {
-				if($visitData['state'] == 2 && $forSite == null) echo ' accent-bg"';
+				if($visitData['state'] == 2) echo ' accent-bg"';
 				else echo ' gray-bg"';
 			}
 		echo ' style="grid-row: '. $grid_start .'/'.$grid_end.';">';
-				if($forSite == 1) {
-					echo '<p>'.lang::HDR_CALENDAR_TAKEN.'</p>';
-				} else {
-					if($_SESSION['pwr'] > 9)
-						echo '<p class="grid-cell">
-							<a href="/visits/visit_details.php?id='.$visitData['id'].'&goto=dashboard">' . FIO($visitData['clientName'],$visitData['clientSurname'],$visitData['prompt']) . '</a>';
-					else echo FIO($visitData['clientName'],$visitData['clientSurname']) . ': ' . $visitData['works'];
-					
-					echo $notice . '</p>';
-					if($_SESSION['pwr'] > 9) {
-						echo '<p class="cal-price';
-							//отмечаем визиты, которые еще не финализированы, но уже в прошлом
-							if(strtotime($visitData['date']) < strtotime(date('d-m-Y')) &&$visitData['state'] < 8 ) {
-								echo ' accent-bg';
-							}
-						
-						echo '">'.$visitData['price_total'].curr().'</p>';
-					}
+		
+		if($_SESSION['pwr'] > 9) {
+			echo '<p class="grid-cell">';
+			if($visitData['clientID'] != 0) {
+				echo '<a href="/visits/visit_details.php?id='.$visitData['id'].'&goto=dashboard">' . FIO($visitData['clientName'],$visitData['clientSurname'],$visitData['prompt']) . '</a>';
+			} else
+				echo '<a href="/visits/visit_details.php?id='.$visitData['id'].'&goto=dashboard">&nbsp</a>';
+		} else echo FIO($visitData['clientName'],$visitData['clientSurname']) . ': ' . $visitData['works'];
+		
+		echo $notice . '</p>';
+		if($_SESSION['pwr'] > 9) {
+			echo '<p class="cal-price';
+				//отмечаем визиты, которые еще не финализированы, но уже в прошлом
+				if(strtotime($visitData['date']) < strtotime(date('d-m-Y')) &&$visitData['state'] < 8 ) {
+					echo ' accent-bg';
 				}
+			
+			echo '">'.$visitData['price_total'].curr().'</p>';
+		}
+				
 		echo '</div>';
 	}
+	
+	
 	
 	// для заполения пустот в календаре
 	if($weekday != null) {
@@ -1652,6 +1673,24 @@ function cal_emptyCell_taken_gap($gridRowFrom, $gridRowTill) {
 	}
 }
 
+function cal_emptyCell_taken_gap_back($gridRowFrom, $gridRowTill,$date) {
+	$gap = $gridRowFrom - 2 + $_SESSION['openFrom'] * 4;
+	$timeFrom = event_duration_read($gap);
+	if(strlen($timeFrom) == 4) $timeFrom = '0' . $timeFrom;
+	
+	$url = '/visits/visit_details.php?new';
+	
+	
+	if ($gridRowFrom <= $_SESSION['grid_rows']) {		
+		if($gridRowTill > ($_SESSION['grid_rows']+2)) $gridRowTill = $_SESSION['grid_rows']+2;
+
+		$timeTill = event_duration_read($gridRowTill - 2 + $_SESSION['openFrom'] * 4);
+		if(strlen($timeTill) == 4) $timeTill = '0' . $timeTill;
+
+		echo '<div class="grid-cell gray-bg gray-link" style="grid-row: '.$gridRowFrom.'/'.$gridRowTill.';grid-column: 1 /10;border:none;" title="'.$timeFrom.'-'.$timeTill.'"><a href="'.$url.'&date='.$date.'&timeFrom='.$timeFrom.'&goto=dashboard"><b></b></a></div>';	
+	}
+}
+
 function empty_cal_day($date, $site=null) {
 	require (dirname(__FILE__).'/connect.php');
 	$stmt = $pdo->prepare("SELECT date FROM locations_vacations WHERE locationID=:locationID AND date=:date");
@@ -1665,6 +1704,32 @@ function empty_cal_day($date, $site=null) {
 		echo '<div class="grid-cell gray-bg" style="grid-row: 2/'.($_SESSION['grid_rows']+2).';">
 			<p>'.lang::HDR_CALENDAR_TAKEN.'</p>
 		</div>';
+	} else {
+		$begin = 2;
+		while($_SESSION['grid_rows'] >= $begin) {
+			if($site != null) {
+					cal_emptyCell_wLink($begin, $date, 1);
+			} else	cal_emptyCell_wLink($begin, $date);
+			
+			$begin = $begin+2;
+		}
+	}
+	
+}
+
+
+function empty_cal_day_back($date, $site=null) {
+	require (dirname(__FILE__).'/connect.php');
+	$stmt = $pdo->prepare("SELECT date FROM locations_vacations WHERE locationID=:locationID AND date=:date");
+	$stmt->bindValue(':locationID', $_SESSION['locationSelected'], PDO::PARAM_INT);
+	$stmt->bindValue(':date', $date, PDO::PARAM_STR);
+	$stmt->execute();
+	
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	
+	if ($row['date'] == $date) {
+		$url = '/visits/visit_details.php?new';
+		echo '<div class="grid-cell gray-bg gray-link" style="grid-row: 2/'.($_SESSION['grid_rows']+2).';grid-column: 1 /10;border:none;"><a href="'.$url.'&date='.$date.'&goto=dashboard"><p>'.lang::HDR_CALENDAR_TAKEN.'</p></a></div>';	
 	} else {
 		$begin = 2;
 		while($_SESSION['grid_rows'] >= $begin) {

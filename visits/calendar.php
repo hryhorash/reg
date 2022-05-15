@@ -30,6 +30,7 @@ if (isset($_SESSION['locationSelected'])) {
 			WHERE visits.locationID = :locationID
 				AND YEARWEEK(visits.date,1) = YEARWEEK($set_date,1)
 				AND state != 8
+				AND state != 9
 			GROUP BY visits.id
 			ORDER BY visits.date ASC, startTime ASC";
 	$stmt = $pdo->prepare($sql);

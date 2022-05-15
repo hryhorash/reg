@@ -29,7 +29,7 @@
 					//не перенаправляем
 			} else {
 				$_SESSION['locationSelected'] = 1;  // КОСТЫЛЬ, УДАЛИТЬ ИЛИ ИЗМЕНИТЬ ДЛЯ ПРОДАКШН
-				header('Location: /index.php?goto=' . $_SERVER['REQUEST_URI']);
+				header('Location: /index.php?fwd=' . $_SERVER['REQUEST_URI']);
 				exit;
 			}
 			// проверяем уровень доступа. ВАЖНО, чтобы уровень страницы был указан ДО подключения конфига

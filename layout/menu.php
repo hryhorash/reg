@@ -49,11 +49,12 @@
 		
 		
 			<?php if ($_SESSION["pwr"] > 89) { ?>
-				<li class="flex" onclick="menuExpand(4);"><i class="fas fa-chart-line"></i><?=lang::MENU_ANALYTICS;?></li>
+				<!-- <li class="flex" onclick="menuExpand(4);"><i class="fas fa-chart-line"></i>lang::MENU_ANALYTICS;</li>
 				<div class="drop-down" id='4'>
-					<li><a href="/reports/finance_main.php/"><?=lang::H2_FINANCE_REPORT;?></a></li>
-					<li><a href="/reports/client_value.php/"><?=lang::MENU_CLIENT_VALUE;?></a></li>
-				</div>
+					<li><a href="/reports/finance_main.php/">lang::H2_FINANCE_REPORT;</a></li>
+					<li><a href="/reports/client_value.php/">lang::MENU_CLIENT_VALUE;</a></li>
+				</div> -->
+				<li><a href="/reports/finance_main.php"><i class="fas fa-chart-line"></i><?=lang::MENU_ANALYTICS;?></a></li>
 			<?php } 
 		if ($_SESSION["pwr"] > 9) { ?>
 			

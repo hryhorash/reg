@@ -90,7 +90,12 @@ if ($id > 0 ){
 		$s->setFetchMode(PDO::FETCH_CLASS, 'Visit');
 		$s->execute(); 
 		$n=1;	
-		while($sales_data[$n] = $s->fetch(PDO::FETCH_ASSOC)) $n++;	
+		$total_sales_price = $total_sales_profit = 0;
+		while($sales_data[$n] = $s->fetch(PDO::FETCH_ASSOC)) {
+			$total_sales_price += $sales_data[$n]['price_total'];
+			$total_sales_profit += $sales_data[$n]['price_total'] - $sales_data[$n]['netto_total'];
+			$n++;	
+		}
 		
 	} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}$stmt = $pdo->prepare($sql);
 	$pdo=NULL;
@@ -224,7 +229,14 @@ echo '<section class="content">';
 					
 					$n++;
 				}?>
-			</tbody>	
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="3"></th>
+					<th><?=correctNumber($total_sales_price);?></th>
+					<th><?=correctNumber($total_sales_profit);?></th>
+				</tr>
+			</tfoot>	
 			</table>
 			
 			

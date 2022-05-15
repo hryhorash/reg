@@ -102,7 +102,7 @@ echo '<section class="content">';
 		<table class='stripy table-autosort'>
 			<thead>
 				<tr>
-					<th style='width: max-content;'>№</th>
+					<th style='width: 7ch;'>№</th>
 					<th><?=lang::DATE;?></th>
 					<th class='table-sortable:*'><?php echo lang::HDR_SUPPLIER;?></th>
 					<th class="mobile-hide"><?php echo lang::HDR_INVOICE;?></th>
@@ -138,7 +138,7 @@ echo '<section class="content">';
 					<th></th>
 					<th><?=$total_pcs;?></th>
 					<th><?=correctNumber($total_sum) . curr();?></th>
-					<th></th>
+					<th class="mobile-hide"></th>
 				</tr>
 			</tfoot>
 		</table>

@@ -5,12 +5,13 @@
 	$errMessage = null;
 }
 if (isset($_SESSION['success'])){ ?>
-	<div class="alert green">
-		<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-		<?php echo $_SESSION['success'];
-	echo '</div>';
-	unset($_SESSION['success']);
-}
+	<!--div class="alert green">
+		<span-- class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span--> 
+		<?php //echo $_SESSION['success'];
+			unset($_SESSION['success']); ?>
+	<!--/div-->
+	
+<?php }
 
 if (isset($_SESSION['error'])){?>
 	<div class="alert red">

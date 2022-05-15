@@ -54,7 +54,6 @@ if (isset($_SESSION['locationSelected'])) {
 		WHERE visits.locationID = :locationID
 			AND YEARWEEK(visits.date,1) = YEARWEEK($set_date,1)
 			AND state != 8
-			AND state != 9
 			AND $staff_cond
 		GROUP BY visits.id
 		ORDER BY visits.date ASC, startTime ASC";
@@ -171,16 +170,68 @@ echo '<section class="content">';
 								switch(true) {
 									case(mb_substr($data[$count]['startTime'],0,2) == $_SESSION['openFrom'] && 
 										 mb_substr($data[$count]['endTime'],0,2) == $_SESSION['openFrom']):
+										 $visit_start = $data[$count]['startTime'];
+										 $visit_end	  = $data[$count]['endTime'];
+										 break;
 
-										case(mb_substr($data[$count]['startTime'],0,2) < $_SESSION['openFrom'] && 
-											mb_substr($data[$count]['endTime'],0,2) >= $_SESSION['openFrom']):
-										
-										case(mb_substr($data[$count]['startTime'],0,2) >= $_SESSION['openFrom'] &&
-											mb_substr($data[$count]['startTime'],0,2) < $_SESSION['openTill']):
-											
-											event_grid_visit($data[$count], $i);
-											break;		
+									case(mb_substr($data[$count]['startTime'],0,2) < $_SESSION['openFrom'] && 
+										mb_substr($data[$count]['endTime'],0,2) >= $_SESSION['openFrom']):
+										$visit_start = $_SESSION['openFrom'];
+										$visit_end	 = $data[$count]['endTime'];
+										$notice = '<i class="fas fa-exclamation-triangle attention" title="'.lang::TOOLTIP_VISIT_START . $data[$count]['startTime'] .'"></i>';
+										break;
+									
+									case(mb_substr($data[$count]['startTime'],0,2) >= $_SESSION['openFrom'] &&
+										mb_substr($data[$count]['startTime'],0,2) < $_SESSION['openTill']):
+										$visit_start = $data[$count]['startTime'];
+										$visit_end	 = $_SESSION['openTill'];
+										$notice = '<i class="fas fa-exclamation-triangle attention" title="'.lang::TOOLTIP_VISIT_END . $data[$count]['endTime'] .'"></i>';
+										break;
 								}
+
+
+								$grid_start = event_duration_slots($_SESSION['openFrom'], $visit_start) +2;
+								$slots_number = event_duration_slots($visit_start, $visit_end);
+								$grid_end = $grid_start+$slots_number;
+								
+								if($grid_end > $_SESSION['grid_rows']) $grid_end = $_SESSION['grid_rows'];  // для сайта с укороченным графиком "до"
+								
+								if ($grid_start < $grid_end) { //для сайта с укороченным графиком "до"
+									echo '<div class="grid-cell'; 
+										if($i != null) {
+											if($data[$count]['state'] == 2 && $forSite == null) echo ' accent-bg"';
+											else echo ' gray-bg"';
+										}
+									echo ' style="grid-row: '. $grid_start .'/'.$grid_end.';">';
+											if($forSite == 1) {
+												echo '<p>'.lang::HDR_CALENDAR_TAKEN.'</p>';
+											} else {
+												if($_SESSION['pwr'] > 9)
+													echo '<p class="grid-cell">
+														<a href="/visits/visit_details.php?id='.$data[$count]['id'].'&goto=dashboard">' . FIO($data[$count]['clientName'],$data[$count]['clientSurname'],$data[$count]['prompt']) . '</a>';
+												else echo FIO($data[$count]['clientName'],$data[$count]['clientSurname']) . ': ' . $data[$count]['works'];
+												
+												echo $notice . '</p>';
+												if($_SESSION['pwr'] > 9) {
+													echo '<p class="cal-price';
+														//отмечаем визиты, которые еще не финализированы, но уже в прошлом
+														if(strtotime($data[$count]['date']) < strtotime(date('d-m-Y')) &&$data[$count]['state'] < 8 ) {
+															echo ' accent-bg';
+														}
+													
+													echo '">'.$data[$count]['price_total'].curr().'</p>';
+												}
+											}
+									echo '</div>';
+								}
+								
+								// для заполения пустот в календаре
+								// $i = weekday
+								if($i != null) {
+									$_SESSION['gridToFill_start'][$i][] = $grid_start;
+									$_SESSION['gridToFill_finish'][$i][] = $grid_end;
+								}
+
 							}
 							
 							$count++;
@@ -200,18 +251,18 @@ echo '<section class="content">';
 						{
 							//пустой день или выходной
 							case($_SESSION['gridToFill_start'][$i] == null):
-								empty_cal_day_back($day);
+								empty_cal_day($day);
 								break;
 							
 							//пустоты до первой записи
 							case($_SESSION['gridToFill_start'][$i][0] > 2):
 								if($_SESSION['gridToFill_start'][$i][0] <= 6 ) {
-									cal_emptyCell_taken_gap_back(2,$_SESSION['gridToFill_start'][$i][0],$day);
+									cal_emptyCell_taken_gap(2,$_SESSION['gridToFill_start'][$i][0]);
 								} else {
 									$begin = 2; //начало второй строки + № конца планируемого блока
 									$visitStart = $_SESSION['gridToFill_start'][$i][0] - 4;
 									
-									cal_emptyCell_taken_gap_back($visitStart, $_SESSION['gridToFill_start'][$i][0],$day);
+									cal_emptyCell_taken_gap($visitStart, $_SESSION['gridToFill_start'][$i][0]);
 									
 									
 									while($begin <= $visitStart && ($visitStart - $begin) >=2) {
@@ -234,10 +285,10 @@ echo '<section class="content">';
 									$gap = $visitStart - $prev_visitEnd;
 									if($gap > 0) {
 										if($gap <= 8) {
-											cal_emptyCell_taken_gap_back($prev_visitEnd, $visitStart,$day);
+											cal_emptyCell_taken_gap($prev_visitEnd, $visitStart);
 										} else {
-											cal_emptyCell_taken_gap_back($prev_visitEnd, ($prev_visitEnd + 4),$day);
-											cal_emptyCell_taken_gap_back(($visitStart-4), $visitStart,$day);
+											cal_emptyCell_taken_gap($prev_visitEnd, ($prev_visitEnd + 4));
+											cal_emptyCell_taken_gap(($visitStart-4), $visitStart);
 										}
 										
 										$begin = $prev_visitEnd + 4; 
@@ -262,10 +313,10 @@ echo '<section class="content">';
 								$fin_gap = $_SESSION['grid_rows'] - $max_fin[$i];
 							
 								if($fin_gap <= 4 ) {
-									cal_emptyCell_taken_gap_back($max_fin[$i], ($_SESSION['grid_rows']+2),$day);
+									cal_emptyCell_taken_gap($max_fin[$i], ($_SESSION['grid_rows']+2));
 								} else {
 									$begin = $max_fin[$i]; 
-									cal_emptyCell_taken_gap_back($begin, ($begin+4),$day);
+									cal_emptyCell_taken_gap($begin, ($begin+4));
 									
 									$begin = $begin + 4;
 									

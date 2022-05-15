@@ -66,7 +66,7 @@ echo '<section class="content">';
 		<table class='stripy table-autosort table-autofilter'>
 			<thead>
 				<tr>
-					<th style='max-width: 10%;'>№			</th>
+					<th style='width: 7ch;'>№			</th>
 					<th class='table-sortable:*'><?=lang::HDR_ITEM_NAME;?></th>
 					<th><?php echo lang::HDR_HANDLING;?></th>
 				</tr>
@@ -75,7 +75,7 @@ echo '<section class="content">';
 			<?php $count=1;
 				while($data[$count] !=NULL) {
 					echo '<tr>
-						<td class="small center" style="max-width:10%;">' . $count	. '</td>
+						<td class="small center">' . $count	. '</td>
 						<td>' . $data[$count]['name']	. '</td>
 						<td class="center">';?>	
 							<a title="<?php echo $handle['change']['title']; ?>" href="<?php echo $handle['change']['link_start'] . $data[$count]['id']; ?>"><?php echo $handle['change']['button']; ?></a>

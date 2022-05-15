@@ -130,3 +130,19 @@ $('input[name="cosmHistory"]').autocomplete({
     $("input[name='cosmID']").val(cosmID);
   },
 });
+
+
+
+// защита от случайного двойного нажатия на кнопку отправки формы
+document.querySelectorAll("form").forEach((form) => {
+  form.classList.remove("is-submitting");  //точно здесь?
+  form.addEventListener("submit", (e) => {
+    if (form.classList.contains("is-submitting")) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    form.classList.add("is-submitting");
+  });
+});

@@ -1,0 +1,61 @@
+<form
+	id="ch_pass_form"
+	name="ch_pass_form"
+	method="post"
+	action="/user/newpass.php"
+	style="
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		max-width: unset;
+	"
+>
+	<fieldset
+		style="
+			position: absolute;
+			top: 150px;
+			left: 50%;
+			transform: translateX(-50%);
+			background: var(--clr-bg);
+			padding: var(--padding-std);
+		"
+	>
+		<div class="row">
+			<input
+				type="password"
+				name="oldPass"
+				required
+				placeholder="<?php echo lang::OLD_PASS; ?>"
+				autofocus
+			/>
+		</div>
+		<div class="row col-2e">
+			<input
+				type="password"
+				name="pass"
+				required
+				placeholder="<?php echo lang::NEW_PASS; ?>"
+			/>
+			<input
+				type="password"
+				name="pass2"
+				required
+				placeholder="<?php echo lang::CONFIRM_PASS; ?>"
+			/>
+
+			<button type="submit" form="ch_pass_form" name="changePass" value="Submit">
+				<?=lang::BTN_CHANGE;?>
+			</button>
+			<button type="button" id="cancel"><?=lang::BTN_CANCEL;?></button>
+		</div>
+	</fieldset>
+</form>
+
+<script>
+	$("#cancel").click(function () {
+		$("#ch_pass_form").remove();
+	});
+</script>

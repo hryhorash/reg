@@ -16,7 +16,21 @@ $i = 1;
 
 switch (true)
 {
-	case(isset($_SESSION['locationName'])):
+	case ($_SESSION['pwr'] == 99):
+		$sql = "SELECT * from locations WHERE archive=:archive ORDER BY city, name";
+		$stmt = $pdo->prepare($sql);
+		$count = 1;
+		
+		try 
+			{
+				$stmt -> bindValue(':archive', $archive, PDO::PARAM_INT);
+				$stmt ->execute();
+				while($locations[$count] = $stmt->fetch(PDO::FETCH_ASSOC))	$count++;
+			} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}
+		break;
+		
+	
+	case (!preg_match('/,/',$_SESSION['locationIDs'])):
 		$sql = "SELECT * from locations WHERE id=:id AND archive=:archive";
 		try 
 			{
@@ -26,7 +40,7 @@ switch (true)
 				$stmt ->execute();
 				$locations[1] = $stmt->fetch(PDO::FETCH_ASSOC);
 				$count=2; 									// для отображения результата нужно
-			} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}$stmt = $pdo->prepare($sql);
+			} catch (PDOException $ex){include($_SERVER['DOCUMENT_ROOT'].'/config/PDO-exceptions.php');}
 				
 		break;
 	default:

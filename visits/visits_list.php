@@ -37,11 +37,11 @@ if (isset($_SESSION['locationSelected'])) {
                 , GROUP_CONCAT(DISTINCT CONCAT(users.name, ' ', users.surname) SEPARATOR '<br/>') as staff
                 , clients.id as clientID, clients.name as clientName, clients.surname as clientSurname, clients.prompt
             FROM `visits`
-			INNER JOIN visits_works ON visits.id = visits_works.visitID
-			INNER JOIN worktypes ON visits_works.workID = worktypes.id
-			INNER JOIN visits_staff ON visits.id = visits_staff.visitID
-			INNER JOIN users ON visits_staff.userID = users.id
-			INNER JOIN clients ON visits.clientID = clients.id
+			LEFT JOIN visits_works ON visits.id = visits_works.visitID
+			LEFT JOIN worktypes ON visits_works.workID = worktypes.id
+			LEFT JOIN visits_staff ON visits.id = visits_staff.visitID
+			LEFT JOIN users ON visits_staff.userID = users.id
+			LEFT JOIN clients ON visits.clientID = clients.id
 			WHERE visits.locationID = :locationID
 				AND $cond_state
 				AND $cond_date

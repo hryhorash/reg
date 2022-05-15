@@ -36,10 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		
 		unset($_SESSION['temp']);
 		
-		if($_POST['backTo'] == 'close') {
-			session_write_close();
-			echo "<script>window.close();</script>";
-		}
+		
 		$_SESSION['success'] = lang::SUCCESS_GENERAL_ADD;
 		
 		
@@ -52,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	session_write_close();
 	
-	if ($_POST['backTo'] =='invoice') {
-		header( 'Location: /cosmetics/invoice_details.php?id='.$_POST["invoiceID"]);
+	if($_POST['backTo'] == 'close') {
+		echo "<script>window.close();</script>";
 		exit;
 	}
 	

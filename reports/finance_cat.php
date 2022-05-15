@@ -43,7 +43,7 @@ if (isset($_SESSION['locationSelected'],$_GET['dateFrom'],$_GET['dateTo'],$_GET[
 	}
 	 
 	try {
-		$stmt2 = $pdo->prepare("SELECT expences.date, SUM(expences.price)/2 as spent
+		$stmt2 = $pdo->prepare("SELECT expences.date, SUM(DISTINCT expences.price) as spent
 							FROM expences
 							LEFT JOIN expences_subcat ON expences_subcat.id = expences.subcatID
 							LEFT JOIN expences_works ON expences_subcat.catID = expences_works.expencesCatID

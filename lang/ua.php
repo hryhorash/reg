@@ -381,7 +381,7 @@ class lang {
 	const H2_FINANCE_CAT = 'Звіт за категоріями робіт';
 		
 	const TOOLTIP_PROFILE = 'Переглянути профіль';
-	const TOOLTIP_VISIT_START = 'початок об ';
+	const TOOLTIP_VISIT_START = 'початок:  ';
 	const TOOLTIP_VISIT_END = 'до ';
 	
 	//Загрузка файлов
